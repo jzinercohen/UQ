@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  
+  
+  
+  <title>UrbanQuest Inc. — Architectural Development, Toronto</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <style>/* latin-ext */
+@font-face {
+  font-family: 'Bebas Neue';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("dfe46357-0f5a-475b-bdf9-79777e8a439e") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Bebas Neue';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("9173d3de-d23b-4b9e-b4f3-2b13ac7b6e0c") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("b281eabe-2c0d-44d8-8dad-9026f5c34096") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: italic;
+  font-weight: 300;
+  font-display: swap;
+  src: url("842721d2-ced2-4dce-8fc3-b77cf0f24fff") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("4f637701-e909-43cf-b713-6d9a7f0d0fd8") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url("e77960d0-836c-48b7-94a2-dad3847a5cd5") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("4f637701-e909-43cf-b713-6d9a7f0d0fd8") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("e77960d0-836c-48b7-94a2-dad3847a5cd5") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("4f637701-e909-43cf-b713-6d9a7f0d0fd8") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("e77960d0-836c-48b7-94a2-dad3847a5cd5") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("4f637701-e909-43cf-b713-6d9a7f0d0fd8") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("e77960d0-836c-48b7-94a2-dad3847a5cd5") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+  <script src="888dcdbf-14fe-43ae-a031-28d82feafd4f" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="983e07e7-0841-4eb7-8296-2a7fb6343600" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="fb772a37-893e-4ac8-a4ab-8c0db7791752" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #0D0D0D;
+      --white: #F5F4F0;
+      --accent: #9BA4AD;
+      --accent-light: #BEC6CE;
+      --mid-grey: #4A4A4A;
+      --light-grey: #AEAAA4;
+      --border: rgba(155,164,173,0.2);
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body: 'DM Sans', sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--white); font-family: var(--font-body); font-weight: 300; overflow-x: hidden; }
+    ::selection { background: var(--accent); color: var(--black); }
+    ::-webkit-scrollbar { width: 3px; }
+    ::-webkit-scrollbar-track { background: var(--black); }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 28px 56px;
+      transition: background 0.4s, padding 0.4s, border-color 0.4s;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      background: rgba(13,13,13,0.94);
+      backdrop-filter: blur(16px);
+      padding: 18px 56px;
+      border-bottom-color: var(--border);
+    }
+    .nav-logo img { height: 34px; filter: invert(1) brightness(10); transition: opacity 0.3s; }
+    .nav-logo img:hover { opacity: 0.65; }
+    .nav-links { display: flex; gap: 40px; list-style: none; }
+    .nav-links a {
+      color: rgba(245,244,240,0.75); text-decoration: none; font-size: 10.5px;
+      letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500;
+      transition: color 0.2s; position: relative;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 1px; background: var(--accent);
+      transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-cta {
+      background: transparent; border: 1px solid rgba(155,164,173,0.5); color: var(--accent-light);
+      padding: 9px 26px; font-family: var(--font-body); font-size: 10px;
+      letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500;
+      cursor: pointer; transition: background 0.25s, color 0.25s, border-color 0.25s;
+    }
+    .nav-cta:hover { background: var(--accent); color: var(--black); border-color: var(--accent); }
+
+    /* ── HERO ── */
+    #hero { height: 100vh; min-height: 700px; position: relative; display: flex; align-items: flex-end; overflow: hidden; }
+
+    .hero-slides { position: absolute; inset: 0; }
+    .hero-slide {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center 30%;
+      opacity: 0; transition: opacity 1.6s cubic-bezier(0.4,0,0.2,1);
+    }
+    .hero-slide.active { opacity: 1; animation: heroZoom 9s ease-in-out forwards; }
+    @keyframes heroZoom { from { transform: scale(1.07); } to { transform: scale(1.01); } }
+
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(13,13,13,0.96) 0%, rgba(13,13,13,0.4) 50%, rgba(13,13,13,0.15) 100%);
+    }
+    .hero-content { position: relative; z-index: 2; padding: 0 56px 88px; max-width: 1400px; width: 100%; }
+    .hero-eyebrow {
+      font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--accent); font-weight: 500; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 16px;
+    }
+    .hero-eyebrow::before { content: ''; display: block; width: 36px; height: 1px; background: var(--accent); }
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(70px, 10vw, 156px);
+      line-height: 0.88; letter-spacing: 0.015em; color: var(--white); margin-bottom: 32px;
+    }
+    .hero-title span { color: var(--accent-light); }
+    .hero-subtitle { font-size: 15px; font-weight: 300; color: var(--light-grey); max-width: 440px; line-height: 1.75; margin-bottom: 44px; }
+    .hero-actions { display: flex; gap: 16px; align-items: center; }
+
+    .btn-primary {
+      background: var(--accent); color: var(--black); border: none;
+      padding: 15px 40px; font-family: var(--font-body); font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600;
+      cursor: pointer; transition: background 0.25s, transform 0.2s;
+    }
+    .btn-primary:hover { background: var(--accent-light); transform: translateY(-2px); }
+    .btn-ghost {
+      background: transparent; color: rgba(245,244,240,0.7); border: 1px solid rgba(245,244,240,0.22);
+      padding: 15px 40px; font-family: var(--font-body); font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase; font-weight: 500;
+      cursor: pointer; transition: border-color 0.25s, color 0.25s; text-decoration: none; display: inline-block;
+    }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent-light); }
+
+    .hero-scroll-cue {
+      position: absolute; bottom: 44px; right: 56px; z-index: 2;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+      color: var(--light-grey); font-size: 8.5px; letter-spacing: 0.3em; text-transform: uppercase;
+    }
+    .scroll-line { width: 1px; height: 56px; background: linear-gradient(to bottom, var(--accent), transparent); animation: scrollPulse 2.2s ease-in-out infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:0.35;} 50%{opacity:0.9;} }
+
+    .hero-stats {
+      position: absolute; top: 50%; right: 56px; transform: translateY(-50%);
+      z-index: 2; display: flex; flex-direction: column; gap: 28px; transition: opacity 0.3s;
+    }
+    .stat-item { text-align: right; }
+    .stat-num { font-family: var(--font-display); font-size: 40px; color: var(--white); line-height: 1; }
+    .stat-num span { color: var(--accent); }
+    .stat-label { font-size: 8.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--light-grey); margin-top: 4px; }
+
+    .hero-dots {
+      position: absolute; bottom: 44px; left: 56px; z-index: 3;
+      display: flex; gap: 10px; align-items: center;
+    }
+    .hero-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: rgba(155,164,173,0.3); border: none; padding: 0; cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    .hero-dot.active { background: var(--accent); transform: scale(1.5); }
+
+    /* ── SECTIONS ── */
+    .section-label {
+      font-size: 8.5px; letter-spacing: 0.35em; text-transform: uppercase;
+      color: var(--accent); font-weight: 500;
+      display: flex; align-items: center; gap: 14px; margin-bottom: 20px;
+    }
+    .section-label::before { content: ''; display: block; width: 28px; height: 1px; background: var(--accent); }
+
+    /* ── MARQUEE ── */
+    .marquee-strip { background: var(--accent); padding: 13px 0; overflow: hidden; white-space: nowrap; }
+    .marquee-inner { display: inline-block; animation: marquee 24s linear infinite; }
+    .marquee-item { font-family: var(--font-display); font-size: 14px; letter-spacing: 0.3em; color: var(--black); padding: 0 28px; display: inline; }
+    .marquee-dot { color: rgba(13,13,13,0.35); padding: 0 6px; display: inline; }
+    @keyframes marquee { 0%{transform:translateX(0);} 100%{transform:translateX(-50%);} }
+
+    /* ── ABOUT ── */
+    .about-outer { background: var(--black); }
+    #about {
+      padding: 140px 56px; display: grid; grid-template-columns: 1fr 1fr;
+      gap: 90px; align-items: center; max-width: 1400px; margin: 0 auto;
+    }
+    .about-heading { font-family: var(--font-display); font-size: clamp(46px, 4.5vw, 76px); line-height: 0.93; letter-spacing: 0.02em; color: var(--white); margin-bottom: 30px; }
+    .about-heading em { color: var(--accent-light); font-style: normal; }
+    .about-body { font-size: 14.5px; line-height: 1.85; color: #9A9690; font-weight: 300; margin-bottom: 18px; max-width: 430px; }
+    .about-divider { width: 56px; height: 1px; background: var(--accent); margin: 28px 0; opacity: 0.6; }
+    .about-right { position: relative; }
+    .about-image-main { width: 100%; aspect-ratio: 4/5; object-fit: cover; display: block; }
+    .about-image-accent { position: absolute; bottom: -28px; left: -28px; width: 46%; aspect-ratio: 1; object-fit: cover; border: 5px solid var(--black); }
+    .about-geo { position: absolute; top: -20px; right: -20px; width: 72px; height: 72px; border: 1px solid var(--accent); opacity: 0.3; }
+
+    /* ── PORTFOLIO ── */
+    #portfolio { padding: 120px 56px; background: #080808; }
+    .portfolio-header {
+      display: flex; align-items: flex-end; justify-content: space-between;
+      margin-bottom: 60px; max-width: 1400px; margin-left: auto; margin-right: auto;
+    }
+    .portfolio-heading { font-family: var(--font-display); font-size: clamp(46px, 4.5vw, 76px); line-height: 0.93; letter-spacing: 0.02em; }
+    .portfolio-filter { display: flex; gap: 3px; }
+    .filter-btn {
+      background: transparent; border: 1px solid rgba(155,164,173,0.18);
+      color: var(--light-grey); padding: 7px 18px; font-family: var(--font-body);
+      font-size: 9.5px; letter-spacing: 0.15em; text-transform: uppercase; cursor: pointer; transition: all 0.2s;
+    }
+    .filter-btn.active, .filter-btn:hover { background: var(--accent); color: var(--black); border-color: var(--accent); }
+
+    .portfolio-grid { display: grid; grid-template-columns: repeat(12,1fr); gap: 14px; max-width: 1400px; margin: 0 auto; }
+    .proj-card { position: relative; overflow: hidden; cursor: pointer; background: #111; }
+    .proj-card-img { width: 100%; display: block; object-fit: cover; transition: transform 0.75s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .proj-card:hover .proj-card-img { transform: scale(1.05); }
+    .proj-card-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(8,8,8,0.94) 0%, rgba(8,8,8,0.1) 55%, transparent 100%);
+      transition: opacity 0.4s;
+    }
+    .proj-card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 26px; transform: translateY(5px); transition: transform 0.4s; }
+    .proj-card:hover .proj-card-info { transform: translateY(0); }
+    .proj-tag { font-size: 8.5px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); font-weight: 500; margin-bottom: 7px; }
+    .proj-name { font-family: var(--font-display); font-size: 24px; letter-spacing: 0.04em; color: var(--white); margin-bottom: 5px; line-height: 1.1; }
+    .proj-location { font-size: 11.5px; color: var(--light-grey); font-weight: 400; }
+    .proj-arrow {
+      position: absolute; top: 24px; right: 24px; width: 38px; height: 38px;
+      border: 1px solid rgba(155,164,173,0.35);
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0; transform: translate(8px,-8px); transition: all 0.35s;
+    }
+    .proj-card:hover .proj-arrow { opacity: 1; transform: translate(0,0); }
+
+    /* ── CONTACT ── */
+    .contact-outer { background: var(--black); }
+    #contact { padding: 140px 56px; max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: start; }
+    .contact-heading { font-family: var(--font-display); font-size: clamp(46px, 4.5vw, 76px); line-height: 0.93; letter-spacing: 0.02em; margin-bottom: 22px; }
+    .contact-heading em { color: var(--accent-light); font-style: normal; }
+    .contact-body { font-size: 14.5px; line-height: 1.85; color: #9A9690; font-weight: 300; margin-bottom: 44px; max-width: 360px; }
+    .contact-details { display: flex; flex-direction: column; gap: 20px; }
+    .contact-item { display: flex; flex-direction: column; gap: 5px; }
+    .contact-item-label { font-size: 8.5px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--accent); font-weight: 500; }
+    .contact-item-value { font-size: 14.5px; color: var(--white); font-weight: 400; line-height: 1.6; }
+    .contact-form { display: flex; flex-direction: column; gap: 18px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-group { display: flex; flex-direction: column; gap: 7px; }
+    .form-label { font-size: 8.5px; letter-spacing: 0.22em; text-transform: uppercase; color: #6A6660; font-weight: 500; }
+    .form-input {
+      background: rgba(255,255,255,0.035); border: 1px solid rgba(155,164,173,0.18);
+      color: var(--white); padding: 13px 15px; font-family: var(--font-body);
+      font-size: 13.5px; font-weight: 300; outline: none; transition: border-color 0.25s; width: 100%;
+      -webkit-appearance: none; border-radius: 0;
+    }
+    .form-input::placeholder { color: #3A3830; }
+    .form-input:focus { border-color: var(--accent); }
+    select.form-input { cursor: pointer; }
+    textarea.form-input { resize: none; min-height: 110px; }
+    .form-submit {
+      background: var(--accent); color: var(--black); border: none;
+      padding: 16px 44px; font-family: var(--font-body); font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase; font-weight: 600;
+      cursor: pointer; transition: background 0.25s, transform 0.2s; align-self: flex-start;
+    }
+    .form-submit:hover { background: var(--accent-light); transform: translateY(-2px); }
+    .form-submit:disabled { opacity: 0.5; cursor: default; transform: none; }
+
+    /* ── FOOTER ── */
+    footer { background: #060606; border-top: 1px solid var(--border); padding: 44px 56px; display: flex; align-items: center; justify-content: space-between; }
+    .footer-logo img { height: 26px; filter: invert(1) brightness(10); opacity: 0.45; }
+    .footer-copy { font-size: 10.5px; color: #3A3830; letter-spacing: 0.04em; }
+    .footer-links { display: flex; gap: 28px; list-style: none; }
+    .footer-links a { font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: #3A3830; text-decoration: none; transition: color 0.2s; }
+    .footer-links a:hover { color: var(--accent); }
+
+    /* ── OVERLAY ── */
+    .overlay-backdrop { position: fixed; inset: 0; background: rgba(6,6,6,0.97); z-index: 200; display: flex; opacity: 0; pointer-events: none; transition: opacity 0.45s ease; }
+    .overlay-backdrop.open { opacity: 1; pointer-events: all; }
+    .overlay-inner { width: 100%; height: 100%; display: grid; grid-template-columns: 55% 45%; overflow: hidden; }
+    .overlay-img-pane { position: relative; overflow: hidden; }
+    .overlay-carousel-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.6s ease; }
+    .overlay-carousel-img.active { opacity: 1; }
+    .carousel-arrow {
+      position: absolute; top: 50%; transform: translateY(-50%); z-index: 4;
+      width: 52px; height: 52px; background: rgba(245,244,240,0); border: 1px solid transparent; padding: 0;
+      color: rgba(245,244,240,0.95); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      filter: drop-shadow(0 1px 6px rgba(0,0,0,0.55));
+      transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s, transform 0.25s;
+    }
+    .carousel-arrow svg { width: 24px; height: 24px; }
+    .carousel-arrow:hover {
+      background: rgba(245,244,240,0.08);
+      border-color: rgba(245,244,240,0.22);
+      backdrop-filter: blur(8px);
+    }
+    .carousel-prev:hover { transform: translateY(-50%) translateX(-2px); }
+    .carousel-next:hover { transform: translateY(-50%) translateX(2px); }
+    .carousel-prev { left: 28px; } .carousel-next { right: 28px; }
+    .carousel-counter {
+      position: absolute; top: 32px; left: 32px; z-index: 4;
+      display: flex; align-items: center; gap: 12px;
+      font-family: var(--font-display); font-size: 18px; letter-spacing: 0.1em; color: var(--white);
+      background: rgba(13,13,13,0.4); backdrop-filter: blur(10px); padding: 7px 16px;
+    }
+    .carousel-counter-divider { width: 22px; height: 1px; background: rgba(245,244,240,0.45); }
+    .carousel-dots { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); z-index: 4; display: flex; gap: 9px; }
+    .carousel-dot { width: 7px; height: 7px; border-radius: 50%; background: rgba(245,244,240,0.35); border: none; padding: 0; cursor: pointer; transition: background 0.3s, transform 0.3s; }
+    .carousel-dot.active { background: var(--accent); transform: scale(1.4); }
+    .overlay-content-pane { padding: 96px 60px; overflow-y: auto; display: flex; flex-direction: column; justify-content: center; }
+    .overlay-close { position: fixed; top: 32px; right: 44px; z-index: 201; background: none; border: 1px solid rgba(155,164,173,0.25); color: #6A6660; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 17px; transition: border-color 0.2s, color 0.2s; }
+    .overlay-close:hover { border-color: var(--accent); color: var(--accent); }
+    .overlay-tag { font-size: 8.5px; letter-spacing: 0.32em; text-transform: uppercase; color: var(--accent); margin-bottom: 14px; }
+    .overlay-title { font-family: var(--font-display); font-size: clamp(44px, 4vw, 68px); line-height: 0.93; letter-spacing: 0.02em; color: var(--white); margin-bottom: 10px; }
+    .overlay-location { font-size: 12.5px; color: var(--light-grey); margin-bottom: 36px; display: flex; align-items: center; gap: 10px; }
+    .overlay-location::before { content: ''; display: block; width: 18px; height: 1px; background: var(--accent); }
+    .overlay-desc { font-size: 14.5px; line-height: 1.85; color: #7A7670; font-weight: 300; margin-bottom: 44px; }
+    .overlay-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; border-top: 1px solid var(--border); padding-top: 36px; }
+    .spec-label { font-size: 8.5px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+    .spec-value { font-size: 17px; font-weight: 400; color: var(--white); }
+    .spec-value small { font-size: 11px; color: var(--light-grey); }
+
+    /* ── CURSOR ── */
+    .cursor-dot { width: 7px; height: 7px; background: var(--accent); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999; transform: translate(-50%,-50%); }
+    .cursor-ring { width: 28px; height: 28px; border: 1px solid rgba(155,164,173,0.45); border-radius: 50%; position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998; transform: translate(-50%,-50%); transition: width 0.3s, height 0.3s, background 0.3s, border-color 0.3s; }
+    .cursor-ring.hovered { width: 52px; height: 52px; background: rgba(155,164,173,0.06); border-color: var(--accent); }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.85s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.85s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-left { opacity: 0; transform: translateX(-36px); transition: opacity 0.9s ease, transform 0.9s ease; }
+    .reveal-left.visible { opacity: 1; transform: translateX(0); }
+    .reveal-right { opacity: 0; transform: translateX(36px); transition: opacity 0.9s ease, transform 0.9s ease; }
+    .reveal-right.visible { opacity: 1; transform: translateX(0); }
+    .d1 { transition-delay: 0.12s; } .d2 { transition-delay: 0.25s; } .d3 { transition-delay: 0.4s; }
+  </style>
+</head>
+<body>
+
+  
+
+  <!-- NAV -->
+  <nav id="mainNav" style="line-height: 0.4; letter-spacing: 1px">
+    <a href="#" class="nav-logo"><img src="ffac50cd-9f77-427e-83b8-a16111b2189c" alt="UrbanQuest Inc."></a>
+    <ul class="nav-links">
+      <li><a href="#about">Studio</a></li>
+      <li><a href="#portfolio">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <button class="nav-cta" id="navEnquire">Enquire</button>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero">
+    <div class="hero-slides" id="heroSlides">
+      <div class="hero-slide active" style="background-image:url(&quot;8e3d72a3-c43d-4e2c-9f92-d29731d384fa&quot;); background-position: center 20%;"></div>
+      <div class="hero-slide" style="background-image:url(&quot;fb56712d-7f1a-42c6-a7eb-37a649544355&quot;); background-position: center 30%;"></div>
+      <div class="hero-slide" style="background-image:url(&quot;3267cb67-1292-4820-9c4d-9e12de8480bd&quot;); background-position: center 40%;"></div>
+    </div>
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">Toronto, Canada · Est. 2008</div>
+      <h1 class="hero-title" style="color: rgb(255, 255, 255)">CRAFTING<br><span>ICONIC</span><br>SPACES</h1>
+      <p class="hero-subtitle">Luxury boutique townhome developments and architectural design for discerning communities across the Greater Toronto Area.</p>
+      <div class="hero-actions">
+        <button class="btn-primary" id="heroWorkBtn">View Our Work</button>
+        <a href="#about" class="btn-ghost">Our Story</a>
+      </div>
+    </div>
+    <div class="hero-stats" id="heroStats">
+      <div class="stat-item"><div class="stat-num">24<span>+</span></div><div class="stat-label">Projects Delivered</div></div>
+      <div class="stat-item"><div class="stat-num">16<span>yr</span></div><div class="stat-label">In Practice</div></div>
+      <div class="stat-item"><div class="stat-num">$2<span>B</span></div><div class="stat-label">Portfolio Value</div></div>
+    </div>
+    <div class="hero-dots" id="heroDots">
+      <button class="hero-dot active" data-idx="0"></button>
+      <button class="hero-dot" data-idx="1"></button>
+      <button class="hero-dot" data-idx="2"></button>
+    </div>
+    <div class="hero-scroll-cue"><div class="scroll-line"></div><span>Scroll</span></div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-strip">
+    <div class="marquee-inner">
+      <span class="marquee-item">LUXURY TOWNHOMES</span><span class="marquee-dot">◆</span><span class="marquee-item">ARCHITECTURAL DESIGN</span><span class="marquee-dot">◆</span><span class="marquee-item">TORONTO</span><span class="marquee-dot">◆</span><span class="marquee-item">URBAN DEVELOPMENT</span><span class="marquee-dot">◆</span><span class="marquee-item">BESPOKE LIVING</span><span class="marquee-dot">◆</span><span class="marquee-item">TIMELESS CRAFT</span><span class="marquee-dot">◆</span><span class="marquee-item">LUXURY TOWNHOMES</span><span class="marquee-dot">◆</span><span class="marquee-item">ARCHITECTURAL DESIGN</span><span class="marquee-dot">◆</span><span class="marquee-item">TORONTO</span><span class="marquee-dot">◆</span><span class="marquee-item">URBAN DEVELOPMENT</span><span class="marquee-dot">◆</span><span class="marquee-item">BESPOKE LIVING</span><span class="marquee-dot">◆</span><span class="marquee-item">TIMELESS CRAFT</span><span class="marquee-dot">◆</span>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="about-outer">
+    <section id="about">
+      <div class="about-left">
+        <div class="section-label reveal">Our Studio</div>
+        <h2 class="about-heading reveal d1">BUILT ON<br><em>VISION</em><br>AND CRAFT</h2>
+        <div class="about-divider reveal d2"></div>
+        <p class="about-body reveal d2">UrbanQuest Inc. is a Toronto-based real estate development and architectural design firm specializing in luxury boutique townhomes. We believe the most enduring homes emerge from a deep understanding of site, community, and the people who will inhabit them.</p>
+        <p class="about-body reveal d3">Every project we undertake is a commitment — to the neighbourhood, to our clients, and to the city we call home. From concept to completion, our integrated approach ensures each development is as considered as it is beautiful.</p>
+      </div>
+      <div class="about-right reveal-right">
+        <img class="about-image-main" src="3267cb67-1292-4820-9c4d-9e12de8480bd" alt="UrbanQuest — Rose Garden Courtyard">
+        <img class="about-image-accent" src="fb56712d-7f1a-42c6-a7eb-37a649544355" alt="UrbanQuest rendering">
+        <div class="about-geo"></div>
+      </div>
+    </section>
+  </div>
+
+  <!-- PORTFOLIO -->
+  <section id="portfolio">
+    <div class="portfolio-header">
+      <div>
+        <div class="section-label reveal">Selected Works</div>
+        <h2 class="portfolio-heading reveal d1">OUR<br>PORTFOLIO</h2>
+      </div>
+      <div class="portfolio-filter reveal d2">
+        <button class="filter-btn active">All</button>
+        <button class="filter-btn">Townhomes</button>
+        <button class="filter-btn">Residential</button>
+      </div>
+    </div>
+    <div class="portfolio-grid" id="portfolioGrid"></div>
+  </section>
+
+  <!-- CONTACT -->
+  <div class="contact-outer">
+    <section id="contact">
+      <div class="contact-left">
+        <div class="section-label reveal">Get In Touch</div>
+        <h2 class="contact-heading reveal d1">LET'S BUILD<br><em>TOGETHER</em></h2>
+        <p class="contact-body reveal d2">Whether you're exploring a new development or looking to bring an architectural vision to life, we'd love to hear from you.</p>
+        <div class="contact-details">
+          <div class="contact-item reveal d2">
+            <span class="contact-item-label">Address</span>
+            <span class="contact-item-value">320 Bay Street, Suite 1100<br>Toronto, ON M5H 2S8</span>
+          </div>
+          <div class="contact-item reveal d3">
+            <span class="contact-item-label">Phone</span>
+            <span class="contact-item-value">+1 (416) 555 0182</span>
+          </div>
+          <div class="contact-item reveal d3">
+            <span class="contact-item-label">Email</span>
+            <span class="contact-item-value">studio@urbanquestinc.com</span>
+          </div>
+        </div>
+      </div>
+      <div class="reveal-right" id="contactFormArea"></div>
+    </section>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo"><img src="ffac50cd-9f77-427e-83b8-a16111b2189c" alt="UrbanQuest Inc."></div>
+    <span class="footer-copy">© 2026 UrbanQuest Incorporated. All rights reserved.</span>
+    <ul class="footer-links">
+      <li><a href="#about">Studio</a></li>
+      <li><a href="#portfolio">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#">Privacy</a></li>
+    </ul>
+  </footer>
+
+  <!-- OVERLAY BACKDROP (managed by React) -->
+  <div id="overlayRoot"></div>
+
+  <script type="text/babel" src="59f3248e-6037-4413-a0c2-8b0bd35da475"></script>
+  <script type="text/babel">
+
+    // ─── DATA ────────────────────────────────────────────────────────────────
+    const R = (window.__resources) || {
+      render1: 'assets/render1.png', render2: 'assets/render2.png', render3: 'assets/render3.png',
+      floorplan1: 'assets/floorplan1.png', floorplan2: 'assets/floorplan2.png'
+    };
+    const PROJECTS = [
+      {
+        id: 1, name: "THE ROSE CLUB LIVING", location: "Toronto, Ontario",
+        tag: "Boutique Townhomes · 2024", year: 2024, units: 10, sqft: "2,800–4,200", status: "Completed",
+        desc: "Ten garden-fronted residences arranged around a private landscaped courtyard. Hand-laid stone facades, full-height glazing, and warm oak detailing draw on the neighbourhood's heritage while speaking an unmistakably contemporary language.",
+        images: [R.render2, R.render1, R.floorplan1]
+      },
+      {
+        id: 2, name: "456 SHAW STREET", location: "Trinity Bellwoods, Toronto",
+        tag: "Freehold Townhomes · 2023", year: 2023, units: 12, sqft: "1,560", status: "Completed",
+        desc: "Freehold urban townhomes on Shaw Street with direct garage access, open-plan second-floor living, and a master ensuite occupying the entire third floor. Each home offers 223 sq ft of private exterior space across two decks.",
+        images: [R.render3, R.floorplan2, R.render1]
+      },
+      {
+        id: 3, name: "EATON TERRACE", location: "Midtown, Toronto",
+        tag: "3 Bed · 3.5 Bath Townhomes · 2022", year: 2022, units: 8, sqft: "2,729–3,069", status: "Completed",
+        desc: "Three-storey terraced residences with private gardens and rooftop terraces. The signature floor plan delivers 2,729 sq ft of interior space with 340 sq ft of exterior living across basement and main levels.",
+        images: [R.render1, R.render3, R.floorplan1]
+      },
+      {
+        id: 4, name: "DEER PARK", location: "Deer Park, Toronto",
+        tag: "Private Residences · 2021", year: 2021, units: 5, sqft: "3,800–6,000", status: "Completed",
+        desc: "Five ultra-private residences set behind a concealed motor court, offering exceptional scale and privacy in one of Toronto's most sought-after established neighbourhoods.",
+        images: [R.render3, R.render2]
+      },
+      {
+        id: 5, name: "CHIARA GARDENS", location: "West Toronto",
+        tag: "Boutique Townhomes · 2023", year: 2023, units: 14, sqft: "2,100–3,600", status: "Completed",
+        desc: "Fourteen light-filled townhomes wrapped around a central garden mews. Limestone, blackened steel, and warm timber create a calm, enduring palette at the heart of a vibrant cultural corridor.",
+        images: [R.render2, R.render1, R.floorplan1]
+      },
+    ];
+
+    const GRID = [
+      { gridColumn: '1 / 7',  gridRow: '1', imgH: 500 },
+      { gridColumn: '7 / 13', gridRow: '1', imgH: 500 },
+      { gridColumn: '1 / 5',  gridRow: '2', imgH: 360 },
+      { gridColumn: '5 / 9',  gridRow: '2', imgH: 360 },
+      { gridColumn: '9 / 13', gridRow: '2', imgH: 360 },
+    ];
+
+    // ─── HERO SLIDESHOW (plain JS, no React needed) ───────────────────────────
+    (function initSlideshow() {
+      const slides = document.querySelectorAll('.hero-slide');
+      const dots = document.querySelectorAll('.hero-dot');
+      let current = 0;
+      let timer;
+
+      function goTo(idx) {
+        slides[current].classList.remove('active');
+        dots[current].classList.remove('active');
+        current = idx;
+        slides[current].classList.add('active');
+        dots[current].classList.add('active');
+      }
+
+      function next() { goTo((current + 1) % slides.length); }
+
+      function start() { timer = setInterval(next, 5500); }
+      function stop() { clearInterval(timer); }
+
+      dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+          stop();
+          goTo(parseInt(dot.dataset.idx));
+          start();
+        });
+      });
+
+      start();
+    })();
+
+    // ─── CONTACT FORM ────────────────────────────────────────────────────────
+    function ContactForm() {
+      const [sent, setSent] = React.useState(false);
+      const [sending, setSending] = React.useState(false);
+
+      return sent ? (
+        <div style={{display:'flex',alignItems:'center',gap:'12px',color:'var(--accent-light)',fontSize:'13.5px',letterSpacing:'0.06em',paddingTop:'8px'}}>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="2,9 7,14 16,4"/></svg>
+          Thank you — we'll be in touch within 48 hours.
+        </div>
+      ) : (
+        <div className="contact-form">
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">First Name</label>
+              <input type="text" className="form-input" placeholder="James" />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Last Name</label>
+              <input type="text" className="form-input" placeholder="Davidson" />
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Email Address</label>
+            <input type="email" className="form-input" placeholder="james@example.com" />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Phone (optional)</label>
+            <input type="tel" className="form-input" placeholder="+1 (416) 000 0000" />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Enquiry Type</label>
+            <select className="form-input">
+              <option>New Development</option>
+              <option>Architectural Design</option>
+              <option>Investment Partnership</option>
+              <option>Media / Press</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Message</label>
+            <textarea className="form-input" placeholder="Tell us about your project or enquiry…"></textarea>
+          </div>
+          <button
+            className="form-submit"
+            disabled={sending}
+            onClick={() => { setSending(true); setTimeout(() => { setSending(false); setSent(true); }, 1000); }}
+          >
+            {sending ? 'Sending…' : 'Send Enquiry'}
+          </button>
+        </div>
+      );
+    }
+
+    // ─── PROJECT OVERLAY ──────────────────────────────────────────────────────
+    function ProjectOverlay({ project, onClose }) {
+      const [slide, setSlide] = React.useState(0);
+      const images = project?.images || [];
+      const count = images.length;
+
+      React.useEffect(() => { setSlide(0); }, [project]);
+
+      React.useEffect(() => {
+        document.body.style.overflow = project ? 'hidden' : '';
+        return () => { document.body.style.overflow = ''; };
+      }, [project]);
+
+      const go = React.useCallback((dir) => {
+        setSlide(s => (s + dir + count) % count);
+      }, [count]);
+
+      React.useEffect(() => {
+        const handler = e => {
+          if (!project) return;
+          if (e.key === 'Escape') onClose();
+          if (e.key === 'ArrowRight') go(1);
+          if (e.key === 'ArrowLeft') go(-1);
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+      }, [onClose, go, project]);
+
+      return (
+        <div className={'overlay-backdrop' + (project ? ' open' : '')}>
+          <div className="overlay-inner">
+            <div className="overlay-img-pane">
+              {images.map((src, i) => (
+                <img key={i} src={src} alt={project.name + ' — view ' + (i+1)}
+                  className={'overlay-carousel-img' + (i === slide ? ' active' : '')} />
+              ))}
+              {count > 1 && (
+                <React.Fragment>
+                  <button className="carousel-arrow carousel-prev" onClick={() => go(-1)} aria-label="Previous">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="10,2 4,8 10,14"/></svg>
+                  </button>
+                  <button className="carousel-arrow carousel-next" onClick={() => go(1)} aria-label="Next">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><polyline points="6,2 12,8 6,14"/></svg>
+                  </button>
+                  <div className="carousel-counter">
+                    <span>{String(slide + 1).padStart(2,'0')}</span>
+                    <span className="carousel-counter-divider"></span>
+                    <span>{String(count).padStart(2,'0')}</span>
+                  </div>
+                  <div className="carousel-dots">
+                    {images.map((_, i) => (
+                      <button key={i} className={'carousel-dot' + (i === slide ? ' active' : '')} onClick={() => setSlide(i)} aria-label={'View ' + (i+1)}></button>
+                    ))}
+                  </div>
+                </React.Fragment>
+              )}
+            </div>
+            <div className="overlay-content-pane">
+              {project && (
+                <React.Fragment>
+                  <div className="overlay-tag">{project.tag}</div>
+                  <h2 className="overlay-title">{project.name}</h2>
+                  <div className="overlay-location">{project.location}</div>
+                  <p className="overlay-desc">{project.desc}</p>
+                  <div className="overlay-specs">
+                    <div><div className="spec-label">Units</div><div className="spec-value">{project.units} <small>residences</small></div></div>
+                    <div><div className="spec-label">Size Range</div><div className="spec-value">{project.sqft} <small>sq ft</small></div></div>
+                    <div><div className="spec-label">Status</div><div className="spec-value">{project.status}</div></div>
+                    <div><div className="spec-label">Year</div><div className="spec-value">{project.year}</div></div>
+                  </div>
+                </React.Fragment>
+              )}
+            </div>
+          </div>
+          <button className="overlay-close" onClick={onClose} aria-label="Close">✕</button>
+        </div>
+      );
+    }
+
+    // ─── PORTFOLIO CARD ───────────────────────────────────────────────────────
+    function ProjectCard({ project, index, onClick }) {
+      const g = GRID[index];
+      const isLarge = index === 0 || index === 1;
+      return (
+        <div className="proj-card reveal" style={{ gridColumn: g.gridColumn, gridRow: g.gridRow }} onClick={onClick}>
+          <img className="proj-card-img" src={project.images[0]} alt={project.name} style={{ height: g.imgH + 'px' }} />
+          <div className="proj-card-overlay"></div>
+          <div className="proj-card-info">
+            <div className="proj-tag">{project.tag}</div>
+            <div className="proj-name" style={isLarge ? { fontSize: '34px' } : {}}>{project.name}</div>
+            <div className="proj-location">{project.location}</div>
+          </div>
+          <div className="proj-arrow">
+            <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="var(--accent)" strokeWidth="1.5">
+              <line x1="2" y1="13" x2="13" y2="2"/><polyline points="5,2 13,2 13,10"/>
+            </svg>
+          </div>
+        </div>
+      );
+    }
+
+    // ─── MAIN APP ─────────────────────────────────────────────────────────────
+    const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
+      "accentColor": "#ffffff",
+      "showStats": true
+    }/*EDITMODE-END*/;
+
+    function App() {
+      const [t, setTweak] = useTweaks(TWEAK_DEFAULTS);
+      const [activeProject, setActiveProject] = React.useState(null);
+
+      // Accent colour
+      React.useEffect(() => {
+        if (t?.accentColor) document.documentElement.style.setProperty('--accent', t.accentColor);
+      }, [t?.accentColor]);
+
+      // Stats visibility
+      React.useEffect(() => {
+        const el = document.getElementById('heroStats');
+        if (el) el.style.display = t?.showStats ? 'flex' : 'none';
+      }, [t?.showStats]);
+
+      // Scroll effects
+      React.useEffect(() => {
+        const nav = document.getElementById('mainNav');
+        const stats = document.getElementById('heroStats');
+        const onScroll = () => {
+          const y = window.scrollY;
+          nav.classList.toggle('scrolled', y > 60);
+          if (stats && t?.showStats) stats.style.opacity = String(Math.max(0, 1 - y / 360));
+        };
+        window.addEventListener('scroll', onScroll, { passive: true });
+        return () => window.removeEventListener('scroll', onScroll);
+      }, [t?.showStats]);
+
+      // Scroll reveals
+      React.useEffect(() => {
+        const els = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+        const obs = new IntersectionObserver(entries => {
+          entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.07 });
+        els.forEach(el => obs.observe(el));
+        return () => obs.disconnect();
+      }, []);
+
+      // Custom cursor removed
+
+      // Scroll buttons
+      React.useEffect(() => {
+        const enquire = document.getElementById('navEnquire');
+        const work = document.getElementById('heroWorkBtn');
+        if (enquire) enquire.addEventListener('click', () => document.getElementById('contact').scrollIntoView({ behavior: 'smooth' }));
+        if (work) work.addEventListener('click', () => document.getElementById('portfolio').scrollIntoView({ behavior: 'smooth' }));
+      }, []);
+
+      // Filter buttons
+      React.useEffect(() => {
+        const btns = document.querySelectorAll('.filter-btn');
+        btns.forEach(btn => btn.addEventListener('click', () => {
+          btns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        }));
+      }, []);
+
+      return (
+        <React.Fragment>
+          {ReactDOM.createPortal(
+            PROJECTS.map((p, i) => <ProjectCard key={p.id} project={p} index={i} onClick={() => setActiveProject(p)} />),
+            document.getElementById('portfolioGrid')
+          )}
+
+          {ReactDOM.createPortal(
+            <ContactForm />,
+            document.getElementById('contactFormArea')
+          )}
+
+          {ReactDOM.createPortal(
+            <ProjectOverlay project={activeProject} onClose={() => setActiveProject(null)} />,
+            document.getElementById('overlayRoot')
+          )}
+
+          <TweaksPanel>
+            <TweakSection label="Brand" />
+            <TweakColor label="Accent Colour" value={t?.accentColor || '#9BA4AD'} onChange={v => setTweak('accentColor', v)} />
+            <TweakSection label="Hero" />
+            <TweakToggle label="Show stats panel" value={t?.showStats ?? true} onChange={v => setTweak('showStats', v)} />
+          </TweaksPanel>
+        </React.Fragment>
+      );
+    }
+
+    const mountEl = document.createElement('div');
+    document.body.appendChild(mountEl);
+    ReactDOM.createRoot(mountEl).render(<App />);
+  </script>
+
+
+</body></html>
