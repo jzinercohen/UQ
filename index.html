@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="UrbanQuest Inc. — Toronto-based real estate development and architectural design firm specializing in luxury boutique townhomes.">
+  <meta name="theme-color" content="#0D0D0D">
+
+  <title>UrbanQuest Inc. — Architectural Development, Toronto</title>
+
+  <link rel="icon" href="assets/img/logo.png">
+  <link rel="preload" href="assets/fonts/bebas-neue-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="assets/fonts/dm-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <a href="#main" class="skip-link">Skip to content</a>
+
+  <!-- ── NAV ── -->
+  <nav id="mainNav">
+    <a href="#hero" class="nav-logo" aria-label="UrbanQuest Inc. — home">
+      <img src="assets/img/logo.png" alt="UrbanQuest Inc.">
+    </a>
+
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#about">Studio</a></li>
+      <li><a href="#portfolio">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li class="nav-links-cta"><a href="#contact">Enquire</a></li>
+    </ul>
+
+    <button class="nav-cta" id="navEnquire">Enquire</button>
+
+    <button class="nav-toggle" id="navToggle" aria-label="Open menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <main id="main">
+
+    <!-- ── HERO ── -->
+    <section id="hero">
+      <div class="hero-slides" id="heroSlides">
+        <div class="hero-slide active" style="background-image:url('assets/img/render3.png'); background-position:center 20%;"></div>
+        <div class="hero-slide" style="background-image:url('assets/img/render1.png'); background-position:center 30%;"></div>
+        <div class="hero-slide" style="background-image:url('assets/img/render2.png'); background-position:center 40%;"></div>
+      </div>
+      <div class="hero-overlay"></div>
+
+      <div class="hero-content">
+        <div class="hero-eyebrow">Toronto, Canada · Est. 2008</div>
+        <h1 class="hero-title">CRAFTING<br><span>ICONIC</span><br>SPACES</h1>
+        <p class="hero-subtitle">Luxury boutique townhome developments and architectural design for discerning communities across the Greater Toronto Area.</p>
+        <div class="hero-actions">
+          <button class="btn-primary" id="heroWorkBtn">View Our Work</button>
+          <a href="#about" class="btn-ghost">Our Story</a>
+        </div>
+      </div>
+
+      <div class="hero-stats" id="heroStats">
+        <div class="stat-item"><div class="stat-num">24<span>+</span></div><div class="stat-label">Projects Delivered</div></div>
+        <div class="stat-item"><div class="stat-num">16<span>yr</span></div><div class="stat-label">In Practice</div></div>
+        <div class="stat-item"><div class="stat-num">$2<span>B</span></div><div class="stat-label">Portfolio Value</div></div>
+      </div>
+
+      <div class="hero-dots" id="heroDots" role="tablist" aria-label="Hero images">
+        <button class="hero-dot active" data-idx="0" role="tab" aria-label="Image 1" aria-selected="true"></button>
+        <button class="hero-dot" data-idx="1" role="tab" aria-label="Image 2" aria-selected="false"></button>
+        <button class="hero-dot" data-idx="2" role="tab" aria-label="Image 3" aria-selected="false"></button>
+      </div>
+
+      <div class="hero-scroll-cue" aria-hidden="true"><div class="scroll-line"></div><span>Scroll</span></div>
+    </section>
+
+    <!-- ── MARQUEE ── -->
+    <div class="marquee-strip" aria-hidden="true">
+      <div class="marquee-inner" id="marqueeInner"></div>
+    </div>
+
+    <!-- ── ABOUT ── -->
+    <div class="about-outer">
+      <section id="about">
+        <div class="about-left">
+          <div class="section-label reveal">Our Studio</div>
+          <h2 class="about-heading reveal d1">BUILT ON<br><em>VISION</em><br>AND CRAFT</h2>
+          <div class="about-divider reveal d2"></div>
+          <p class="about-body reveal d2">UrbanQuest Inc. is a Toronto-based real estate development and architectural design firm specializing in luxury boutique townhomes. We believe the most enduring homes emerge from a deep understanding of site, community, and the people who will inhabit them.</p>
+          <p class="about-body reveal d3">Every project we undertake is a commitment — to the neighbourhood, to our clients, and to the city we call home. From concept to completion, our integrated approach ensures each development is as considered as it is beautiful.</p>
+        </div>
+        <div class="about-right reveal-right">
+          <img class="about-image-main" src="assets/img/render2.png" alt="UrbanQuest — Rose Garden Courtyard" loading="lazy">
+          <img class="about-image-accent" src="assets/img/render1.png" alt="UrbanQuest architectural rendering" loading="lazy">
+          <div class="about-geo" aria-hidden="true"></div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── PORTFOLIO ── -->
+    <section id="portfolio">
+      <div class="portfolio-header">
+        <div>
+          <div class="section-label reveal">Selected Works</div>
+          <h2 class="portfolio-heading reveal d1">OUR<br>PORTFOLIO</h2>
+        </div>
+        <div class="portfolio-filter reveal d2" id="portfolioFilter"></div>
+      </div>
+      <div class="portfolio-grid" id="portfolioGrid"></div>
+    </section>
+
+    <!-- ── CONTACT ── -->
+    <div class="contact-outer">
+      <section id="contact">
+        <div class="contact-left">
+          <div class="section-label reveal">Get In Touch</div>
+          <h2 class="contact-heading reveal d1">LET'S BUILD<br><em>TOGETHER</em></h2>
+          <p class="contact-body reveal d2">Whether you're exploring a new development or looking to bring an architectural vision to life, we'd love to hear from you.</p>
+          <div class="contact-details">
+            <div class="contact-item reveal d2">
+              <span class="contact-item-label">Address</span>
+              <span class="contact-item-value">320 Bay Street, Suite 1100<br>Toronto, ON M5H 2S8</span>
+            </div>
+            <div class="contact-item reveal d3">
+              <span class="contact-item-label">Phone</span>
+              <span class="contact-item-value"><a href="tel:+14165550182">+1 (416) 555 0182</a></span>
+            </div>
+            <div class="contact-item reveal d3">
+              <span class="contact-item-label">Email</span>
+              <span class="contact-item-value"><a href="mailto:studio@urbanquestinc.com">studio@urbanquestinc.com</a></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="reveal-right">
+          <form class="contact-form" id="contactForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="firstName">First Name</label>
+                <input class="form-input" id="firstName" name="firstName" type="text" placeholder="James" autocomplete="given-name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="lastName">Last Name</label>
+                <input class="form-input" id="lastName" name="lastName" type="text" placeholder="Davidson" autocomplete="family-name" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">Email Address</label>
+              <input class="form-input" id="email" name="email" type="email" placeholder="james@example.com" autocomplete="email" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone">Phone (optional)</label>
+              <input class="form-input" id="phone" name="phone" type="tel" placeholder="+1 (416) 000 0000" autocomplete="tel">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="enquiryType">Enquiry Type</label>
+              <select class="form-input" id="enquiryType" name="enquiryType">
+                <option>New Development</option>
+                <option>Architectural Design</option>
+                <option>Investment Partnership</option>
+                <option>Media / Press</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="message">Message</label>
+              <textarea class="form-input" id="message" name="message" placeholder="Tell us about your project or enquiry…" required></textarea>
+            </div>
+            <button class="form-submit" type="submit">Send Enquiry</button>
+            <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
+          </form>
+        </div>
+      </section>
+    </div>
+
+  </main>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div class="footer-logo"><img src="assets/img/logo.png" alt="UrbanQuest Inc." loading="lazy"></div>
+    <span class="footer-copy">© 2026 UrbanQuest Incorporated. All rights reserved.</span>
+    <ul class="footer-links">
+      <li><a href="#about">Studio</a></li>
+      <li><a href="#portfolio">Work</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li><a href="#">Privacy</a></li>
+    </ul>
+  </footer>
+
+  <!-- ── PROJECT OVERLAY ── -->
+  <div class="overlay-backdrop" id="overlay" role="dialog" aria-modal="true" aria-labelledby="overlayTitle" hidden>
+    <div class="overlay-inner">
+      <div class="overlay-img-pane" id="overlayImgPane">
+        <button class="carousel-arrow carousel-prev" id="carouselPrev" aria-label="Previous image">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="10,2 4,8 10,14"/></svg>
+        </button>
+        <button class="carousel-arrow carousel-next" id="carouselNext" aria-label="Next image">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="6,2 12,8 6,14"/></svg>
+        </button>
+        <div class="carousel-counter" id="carouselCounter">
+          <span id="carouselCurrent">01</span>
+          <span class="carousel-counter-divider"></span>
+          <span id="carouselTotal">01</span>
+        </div>
+        <div class="carousel-dots" id="carouselDots"></div>
+      </div>
+
+      <div class="overlay-content-pane">
+        <div class="overlay-tag" id="overlayTag"></div>
+        <h2 class="overlay-title" id="overlayTitle"></h2>
+        <div class="overlay-location" id="overlayLocation"></div>
+        <p class="overlay-desc" id="overlayDesc"></p>
+        <div class="overlay-specs">
+          <div><div class="spec-label">Units</div><div class="spec-value"><span id="specUnits"></span> <small>residences</small></div></div>
+          <div><div class="spec-label">Size Range</div><div class="spec-value"><span id="specSqft"></span> <small>sq ft</small></div></div>
+          <div><div class="spec-label">Status</div><div class="spec-value" id="specStatus"></div></div>
+          <div><div class="spec-label">Year</div><div class="spec-value" id="specYear"></div></div>
+        </div>
+      </div>
+    </div>
+    <button class="overlay-close" id="overlayClose" aria-label="Close project">✕</button>
+  </div>
+
+  <script src="projects.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
