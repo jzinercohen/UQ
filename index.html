@@ -41,15 +41,11 @@
 
     <!-- ── HERO ── -->
     <section id="hero">
-      <div class="hero-slides" id="heroSlides">
-        <div class="hero-slide active" style="background-image:url('assets/img/render3.png'); background-position:center 20%;"></div>
-        <div class="hero-slide" style="background-image:url('assets/img/render1.png'); background-position:center 30%;"></div>
-        <div class="hero-slide" style="background-image:url('assets/img/render2.png'); background-position:center 40%;"></div>
-      </div>
+      <!-- Slides are rendered from HERO_IMAGES in projects.js -->
+      <div class="hero-slides" id="heroSlides"></div>
       <div class="hero-overlay"></div>
 
       <div class="hero-content">
-        <div class="hero-eyebrow">Toronto, Canada · Est. 2008</div>
         <h1 class="hero-title">CRAFTING<br><span>ICONIC</span><br>SPACES</h1>
         <p class="hero-subtitle">Luxury boutique townhome developments and architectural design for discerning communities across the Greater Toronto Area.</p>
         <div class="hero-actions">
@@ -64,11 +60,8 @@
         <div class="stat-item"><div class="stat-num">$2<span>B</span></div><div class="stat-label">Portfolio Value</div></div>
       </div>
 
-      <div class="hero-dots" id="heroDots" role="tablist" aria-label="Hero images">
-        <button class="hero-dot active" data-idx="0" role="tab" aria-label="Image 1" aria-selected="true"></button>
-        <button class="hero-dot" data-idx="1" role="tab" aria-label="Image 2" aria-selected="false"></button>
-        <button class="hero-dot" data-idx="2" role="tab" aria-label="Image 3" aria-selected="false"></button>
-      </div>
+      <!-- Dots are rendered alongside the slides, from HERO_IMAGES -->
+      <div class="hero-dots" id="heroDots" role="tablist" aria-label="Hero images"></div>
 
       <div class="hero-scroll-cue" aria-hidden="true"><div class="scroll-line"></div><span>Scroll</span></div>
     </section>
@@ -89,8 +82,8 @@
           <p class="about-body reveal d3">Every project we undertake is a commitment — to the neighbourhood, to our clients, and to the city we call home. From concept to completion, our integrated approach ensures each development is as considered as it is beautiful.</p>
         </div>
         <div class="about-right reveal-right">
-          <img class="about-image-main" src="assets/img/render2.png" alt="UrbanQuest — Rose Garden Courtyard" loading="lazy">
-          <img class="about-image-accent" src="assets/img/render1.png" alt="UrbanQuest architectural rendering" loading="lazy">
+          <img class="about-image-main" src="assets/img/rose-3.jpg" alt="The Rose Club — street elevation, Roselawn Avenue" loading="lazy">
+          <img class="about-image-accent" src="assets/img/shaw-1.jpg" alt="Shaw Street townhomes" loading="lazy">
           <div class="about-geo" aria-hidden="true"></div>
         </div>
       </section>
@@ -103,7 +96,6 @@
           <div class="section-label reveal">Selected Works</div>
           <h2 class="portfolio-heading reveal d1">OUR<br>PORTFOLIO</h2>
         </div>
-        <div class="portfolio-filter reveal d2" id="portfolioFilter"></div>
       </div>
       <div class="portfolio-grid" id="portfolioGrid"></div>
     </section>

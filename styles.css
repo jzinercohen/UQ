@@ -59,13 +59,29 @@
     --black: #0d0d0d;
     --black-deep: #080808;
     --white: #f5f4f0;
+
+    /* ── The slate accent is reserved for ICONIC ──
+       #9ba4ad is a cool blue-grey; --white is a warm off-white. Used broadly,
+       the two hues read as a third colour fighting the black-and-white scheme.
+       So the slate now appears in exactly one place — the ICONIC line in the
+       hero — where it earns its keep as a deliberate accent.
+
+       Everywhere else, tonal steps of --white do the job the slate used to do.
+       They carry the same hierarchy without introducing a competing hue.
+       Do not reach for --accent when you want "a grey"; reach for these. */
     --accent: #9ba4ad;
     --accent-light: #bec6ce;
+
+    --label: rgba(245, 244, 240, 0.68); /* micro-labels, tags, eyebrows */
+    --label-dim: rgba(245, 244, 240, 0.42); /* tertiary text */
+    --rule: rgba(245, 244, 240, 0.22); /* hairlines, dividers, borders */
+    --rule-soft: rgba(245, 244, 240, 0.12); /* barely-there edges */
+
     --mid-grey: #4a4a4a;
     --light-grey: #aeaaa4;
     --body-grey: #9a9690;
     --faint: #3a3830;
-    --border: rgba(155, 164, 173, 0.2);
+    --border: rgba(245, 244, 240, 0.16);
 
     --font-display: 'Bebas Neue', 'Helvetica Neue', Impact, sans-serif;
     --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -104,7 +120,7 @@ img {
 }
 
 ::selection {
-    background: var(--accent);
+    background: var(--white);
     color: var(--black);
 }
 
@@ -115,12 +131,12 @@ img {
     background: var(--black);
 }
 ::-webkit-scrollbar-thumb {
-    background: var(--accent);
+    background: var(--rule);
     border-radius: 2px;
 }
 
 :focus-visible {
-    outline: 2px solid var(--accent);
+    outline: 2px solid var(--white);
     outline-offset: 3px;
 }
 
@@ -129,7 +145,7 @@ img {
     top: -60px;
     left: 16px;
     z-index: 300;
-    background: var(--accent);
+    background: var(--white);
     color: var(--black);
     padding: 10px 20px;
     font-size: 11px;
@@ -183,6 +199,38 @@ nav.scrolled {
 .nav-logo {
     display: block;
     line-height: 0;
+    position: relative;
+}
+/* Hover: the mark grows a touch while a white stroke draws itself around it —
+   two L-shaped halves, each running its width first and its height second, so
+   they travel in opposite directions and meet at the remaining corners.
+   The 0.22s delay on `height` is what sequences it; drop it and the box just
+   scales open. */
+.nav-logo::before,
+.nav-logo::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    pointer-events: none;
+    transition: width 0.22s ease, height 0.22s ease 0.22s;
+}
+.nav-logo::before {
+    top: -9px;
+    left: -9px;
+    border-top: 1px solid var(--white);
+    border-left: 1px solid var(--white);
+}
+.nav-logo::after {
+    right: -9px;
+    bottom: -9px;
+    border-right: 1px solid var(--white);
+    border-bottom: 1px solid var(--white);
+}
+.nav-logo:hover::before,
+.nav-logo:hover::after {
+    width: calc(100% + 18px);
+    height: calc(100% + 18px);
 }
 /* The logo ships as black artwork on an opaque white background (no alpha).
    invert() flips it to white-on-black, then `screen` drops the black to
@@ -191,10 +239,11 @@ nav.scrolled {
     height: 34px;
     filter: invert(1);
     mix-blend-mode: screen;
-    transition: opacity 0.3s;
+    transform-origin: left center;
+    transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
-.nav-logo img:hover {
-    opacity: 0.65;
+.nav-logo:hover img {
+    transform: scale(1.07);
 }
 
 .nav-links {
@@ -219,7 +268,7 @@ nav.scrolled {
     left: 0;
     right: 0;
     height: 1px;
-    background: var(--accent);
+    background: var(--white);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform 0.3s;
@@ -237,8 +286,8 @@ nav.scrolled {
 
 .nav-cta {
     background: transparent;
-    border: 1px solid rgba(155, 164, 173, 0.5);
-    color: var(--accent-light);
+    border: 1px solid rgba(245, 244, 240, 0.45);
+    color: var(--white);
     padding: 9px 26px;
     font-family: var(--font-body);
     font-size: 10px;
@@ -249,9 +298,9 @@ nav.scrolled {
     transition: background 0.25s, color 0.25s, border-color 0.25s;
 }
 .nav-cta:hover {
-    background: var(--accent);
+    background: var(--white);
     color: var(--black);
-    border-color: var(--accent);
+    border-color: var(--white);
 }
 
 /* Hamburger — hidden until the links collapse at 900px. */
@@ -325,7 +374,18 @@ nav.scrolled {
 .hero-overlay {
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(13, 13, 13, 0.96) 0%, rgba(13, 13, 13, 0.4) 50%, rgba(13, 13, 13, 0.15) 100%);
+    /* Tuned for photography, not renders. The real shots are bright daylight
+       exteriors — pale stucco and blown-out sky — so the eyebrow, the accent
+       line of the title, and the hero stats all need more scrim than the
+       original AI renders did. Lighten these values and the top of the hero
+       loses its text. */
+    background:
+        /* Edge scrim. All hero text is edge-aligned — copy left, stats right —
+           and it sits high enough that the vertical gradient below is still
+           thin there. This darkens both margins and leaves the centre of the
+           photograph open. */
+        linear-gradient(to right, rgba(13, 13, 13, 0.8) 0%, rgba(13, 13, 13, 0.3) 30%, rgba(13, 13, 13, 0) 52%, rgba(13, 13, 13, 0.2) 80%, rgba(13, 13, 13, 0.55) 100%),
+        linear-gradient(to top, rgba(13, 13, 13, 0.82) 0%, rgba(13, 13, 13, 0.36) 38%, rgba(13, 13, 13, 0.12) 70%, rgba(13, 13, 13, 0.08) 100%);
 }
 
 .hero-content {
@@ -334,25 +394,6 @@ nav.scrolled {
     padding: 0 var(--gutter) 88px;
     max-width: var(--maxw);
     width: 100%;
-}
-.hero-eyebrow {
-    font-size: 10px;
-    letter-spacing: 0.35em;
-    text-transform: uppercase;
-    color: var(--accent);
-    font-weight: 500;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-}
-.hero-eyebrow::before {
-    content: '';
-    display: block;
-    width: 36px;
-    height: 1px;
-    background: var(--accent);
-    flex: none;
 }
 .hero-title {
     font-family: var(--font-display);
@@ -382,7 +423,7 @@ nav.scrolled {
 }
 
 .btn-primary {
-    background: var(--accent);
+    background: var(--white);
     color: var(--black);
     border: none;
     padding: 15px 40px;
@@ -395,7 +436,7 @@ nav.scrolled {
     transition: background 0.25s, transform 0.2s;
 }
 .btn-primary:hover {
-    background: var(--accent-light);
+    background: #ffffff;
     transform: translateY(-2px);
 }
 .btn-ghost {
@@ -414,8 +455,8 @@ nav.scrolled {
     display: inline-block;
 }
 .btn-ghost:hover {
-    border-color: var(--accent);
-    color: var(--accent-light);
+    border-color: var(--white);
+    color: var(--white);
 }
 
 .hero-scroll-cue {
@@ -435,7 +476,7 @@ nav.scrolled {
 .scroll-line {
     width: 1px;
     height: 56px;
-    background: linear-gradient(to bottom, var(--accent), transparent);
+    background: linear-gradient(to bottom, var(--label), transparent);
     animation: scrollPulse 2.2s ease-in-out infinite;
 }
 @keyframes scrollPulse {
@@ -469,7 +510,7 @@ nav.scrolled {
     line-height: 1;
 }
 .stat-num span {
-    color: var(--accent);
+    color: var(--label);
 }
 .stat-label {
     font-size: 8.5px;
@@ -492,14 +533,14 @@ nav.scrolled {
     width: 5px;
     height: 5px;
     border-radius: 50%;
-    background: rgba(155, 164, 173, 0.3);
+    background: rgba(245, 244, 240, 0.28);
     border: none;
     padding: 0;
     cursor: pointer;
     transition: background 0.3s, transform 0.3s;
 }
 .hero-dot.active {
-    background: var(--accent);
+    background: var(--white);
     transform: scale(1.5);
 }
 
@@ -508,7 +549,7 @@ nav.scrolled {
     font-size: 8.5px;
     letter-spacing: 0.35em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--label);
     font-weight: 500;
     display: flex;
     align-items: center;
@@ -520,13 +561,13 @@ nav.scrolled {
     display: block;
     width: 28px;
     height: 1px;
-    background: var(--accent);
+    background: var(--rule);
     flex: none;
 }
 
 /* ── MARQUEE ── */
 .marquee-strip {
-    background: var(--accent);
+    background: var(--white);
     padding: 13px 0;
     overflow: hidden;
     white-space: nowrap;
@@ -592,7 +633,7 @@ nav.scrolled {
 .about-divider {
     width: 56px;
     height: 1px;
-    background: var(--accent);
+    background: var(--rule);
     margin: 28px 0;
     opacity: 0.6;
 }
@@ -620,7 +661,7 @@ nav.scrolled {
     right: -20px;
     width: 72px;
     height: 72px;
-    border: 1px solid var(--accent);
+    border: 1px solid var(--rule-soft);
     opacity: 0.3;
 }
 
@@ -644,30 +685,6 @@ nav.scrolled {
     line-height: 0.93;
     letter-spacing: 0.02em;
 }
-.portfolio-filter {
-    display: flex;
-    gap: 3px;
-    flex-wrap: wrap;
-}
-.filter-btn {
-    background: transparent;
-    border: 1px solid rgba(155, 164, 173, 0.18);
-    color: var(--light-grey);
-    padding: 7px 18px;
-    font-family: var(--font-body);
-    font-size: 9.5px;
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-.filter-btn.active,
-.filter-btn:hover {
-    background: var(--accent);
-    color: var(--black);
-    border-color: var(--accent);
-}
-
 .portfolio-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
@@ -696,10 +713,6 @@ nav.scrolled {
     grid-column: span 6;
     aspect-ratio: 7/5;
 }
-.proj-card.is-hidden {
-    display: none;
-}
-
 .proj-card-img {
     width: 100%;
     height: 100%;
@@ -743,7 +756,7 @@ nav.scrolled {
     font-size: 8.5px;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--label);
     font-weight: 500;
     margin-bottom: 7px;
 }
@@ -770,7 +783,8 @@ nav.scrolled {
     right: 24px;
     width: 38px;
     height: 38px;
-    border: 1px solid rgba(155, 164, 173, 0.35);
+    color: var(--white);
+    border: 1px solid var(--rule);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -831,7 +845,7 @@ nav.scrolled {
     font-size: 8.5px;
     letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--label);
     font-weight: 500;
 }
 .contact-item-value {
@@ -846,7 +860,7 @@ nav.scrolled {
     transition: color 0.2s;
 }
 .contact-item-value a:hover {
-    color: var(--accent);
+    color: var(--white);
 }
 
 .contact-form {
@@ -873,7 +887,7 @@ nav.scrolled {
 }
 .form-input {
     background: rgba(255, 255, 255, 0.035);
-    border: 1px solid rgba(155, 164, 173, 0.18);
+    border: 1px solid var(--rule-soft);
     color: var(--white);
     padding: 13px 15px;
     font-family: var(--font-body);
@@ -890,7 +904,7 @@ nav.scrolled {
     color: var(--faint);
 }
 .form-input:focus {
-    border-color: var(--accent);
+    border-color: var(--white);
 }
 .form-input:user-invalid {
     border-color: #a8574f;
@@ -903,7 +917,7 @@ textarea.form-input {
     min-height: 110px;
 }
 .form-submit {
-    background: var(--accent);
+    background: var(--white);
     color: var(--black);
     border: none;
     padding: 16px 44px;
@@ -917,7 +931,7 @@ textarea.form-input {
     align-self: flex-start;
 }
 .form-submit:hover:not(:disabled) {
-    background: var(--accent-light);
+    background: #ffffff;
     transform: translateY(-2px);
 }
 .form-submit:disabled {
@@ -928,7 +942,7 @@ textarea.form-input {
 .form-status {
     font-size: 13px;
     letter-spacing: 0.04em;
-    color: var(--accent-light);
+    color: var(--label);
     min-height: 1em;
 }
 .form-status.error {
@@ -938,7 +952,7 @@ textarea.form-input {
     display: flex;
     align-items: center;
     gap: 12px;
-    color: var(--accent-light);
+    color: var(--white);
     font-size: 13.5px;
     letter-spacing: 0.06em;
     padding-top: 8px;
@@ -984,7 +998,7 @@ footer {
     transition: color 0.2s;
 }
 .footer-links a:hover {
-    color: var(--accent);
+    color: var(--white);
 }
 
 /* ── PROJECT OVERLAY ── */
@@ -1029,6 +1043,20 @@ footer {
 .overlay-carousel-img.active {
     opacity: 1;
 }
+
+/* Per-project colour correction, opt-in via `tone` in projects.js.
+   The Chiara shoot came back cool and overcast and read as gloomy next to the
+   other projects. Correcting in CSS rather than re-encoding keeps the files on
+   disk untouched, so a properly graded set can drop in later and this comes
+   straight back out. Keep it subtle — this is a lift, not a filter. */
+.tone-warm {
+    filter: brightness(1.07) saturate(1.16) sepia(0.12) hue-rotate(-6deg);
+}
+/* No box, no fill, no blur — just the mark itself.
+   The arrow is near-black and fully opaque from the start: at lower opacity it
+   vanished entirely on the darker frames. What keeps a black glyph readable on
+   a dark photograph is the pair of light halos below — a tight one for edge
+   definition and a wide one for separation — not a panel behind it. */
 .carousel-arrow {
     position: absolute;
     top: 50%;
@@ -1036,25 +1064,24 @@ footer {
     z-index: 4;
     width: 52px;
     height: 52px;
-    background: rgba(245, 244, 240, 0);
-    border: 1px solid transparent;
+    background: none;
+    border: none;
     padding: 0;
-    color: rgba(245, 244, 240, 0.95);
+    color: #141414;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    filter: drop-shadow(0 1px 6px rgba(0, 0, 0, 0.55));
-    transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s, transform 0.25s;
+    filter: drop-shadow(0 0 3px rgba(245, 244, 240, 0.95)) drop-shadow(0 0 9px rgba(245, 244, 240, 0.65));
+    transition: filter 0.25s, transform 0.25s;
 }
 .carousel-arrow svg {
-    width: 24px;
-    height: 24px;
+    width: 26px;
+    height: 26px;
+    stroke-width: 2;
 }
 .carousel-arrow:hover {
-    background: rgba(245, 244, 240, 0.08);
-    border-color: rgba(245, 244, 240, 0.22);
-    backdrop-filter: blur(8px);
+    filter: drop-shadow(0 0 4px rgba(245, 244, 240, 1)) drop-shadow(0 0 14px rgba(245, 244, 240, 0.85));
 }
 .carousel-prev {
     left: 28px;
@@ -1109,7 +1136,7 @@ footer {
     transition: background 0.3s, transform 0.3s;
 }
 .carousel-dot.active {
-    background: var(--accent);
+    background: var(--white);
     transform: scale(1.4);
 }
 /* A single-image project shows no chrome. */
@@ -1132,7 +1159,7 @@ footer {
     right: 44px;
     z-index: 201;
     background: rgba(6, 6, 6, 0.6);
-    border: 1px solid rgba(155, 164, 173, 0.25);
+    border: 1px solid var(--rule);
     color: #8a8680;
     width: 46px;
     height: 46px;
@@ -1144,14 +1171,14 @@ footer {
     transition: border-color 0.2s, color 0.2s;
 }
 .overlay-close:hover {
-    border-color: var(--accent);
-    color: var(--accent);
+    border-color: var(--white);
+    color: var(--white);
 }
 .overlay-tag {
     font-size: 8.5px;
     letter-spacing: 0.32em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--label);
     margin-bottom: 14px;
 }
 .overlay-title {
@@ -1176,7 +1203,7 @@ footer {
     display: block;
     width: 18px;
     height: 1px;
-    background: var(--accent);
+    background: var(--rule);
     flex: none;
 }
 .overlay-desc {
@@ -1197,7 +1224,7 @@ footer {
     font-size: 8.5px;
     letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--accent);
+    color: var(--label);
     margin-bottom: 5px;
 }
 .spec-value {
@@ -1350,8 +1377,8 @@ footer {
         margin-top: 12px;
     }
     .nav-links-cta a {
-        border: 1px solid rgba(155, 164, 173, 0.5);
-        color: var(--accent-light);
+        border: 1px solid rgba(245, 244, 240, 0.45);
+        color: var(--white);
         padding: 14px 34px;
         font-size: 11px;
     }
@@ -1480,10 +1507,6 @@ footer {
 @media (max-width: 560px) {
     .hero-title {
         font-size: clamp(48px, 15vw, 76px);
-    }
-    .hero-eyebrow {
-        font-size: 9px;
-        letter-spacing: 0.28em;
     }
     .hero-actions {
         gap: 12px;

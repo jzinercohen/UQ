@@ -23,6 +23,24 @@
 
     /* ── HERO SLIDESHOW ── */
     function initSlideshow() {
+        const slideWrap = $('#heroSlides')
+        const dotWrap = $('#heroDots')
+        if (!slideWrap || !dotWrap || !HERO_IMAGES.length) return
+
+        // Built from HERO_IMAGES rather than hard-coded, so the curated set can
+        // grow or shrink without the dots falling out of sync with the slides.
+        slideWrap.innerHTML = HERO_IMAGES.map(
+            (img, i) =>
+                `<div class="hero-slide${i === 0 ? ' active' : ''}" role="img" aria-label="${img.alt}"
+                      style="background-image:url('${img.src}'); background-position:${img.position};"></div>`
+        ).join('')
+
+        dotWrap.innerHTML = HERO_IMAGES.map(
+            (img, i) =>
+                `<button class="hero-dot${i === 0 ? ' active' : ''}" data-idx="${i}" role="tab"
+                         aria-label="${img.alt}" aria-selected="${i === 0}"></button>`
+        ).join('')
+
         const slides = $$('.hero-slide')
         const dots = $$('.hero-dot')
         if (slides.length < 2) return
@@ -64,17 +82,16 @@
         start()
     }
 
-    /* ── PORTFOLIO GRID + FILTERS ── */
+    /* ── PORTFOLIO GRID ── */
     function initPortfolio() {
         const grid = $('#portfolioGrid')
-        const filterBar = $('#portfolioFilter')
         if (!grid) return
 
         grid.innerHTML = PROJECTS.map(
             (p) => `
-            <button class="proj-card reveal" data-id="${p.id}" data-category="${p.category}"
+            <button class="proj-card reveal" data-id="${p.id}"
                     aria-label="View project — ${p.name}">
-              <img class="proj-card-img" src="${p.images[0]}" alt="${p.name}" loading="lazy">
+              <img class="proj-card-img${p.tone ? ` tone-${p.tone}` : ''}" src="${p.images[0]}" alt="${p.name}" loading="lazy">
               <span class="proj-card-overlay"></span>
               <span class="proj-card-info">
                 <span class="proj-tag">${p.tag}</span>
@@ -82,7 +99,7 @@
                 <span class="proj-location">${p.location}</span>
               </span>
               <span class="proj-arrow">
-                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="var(--accent)" stroke-width="1.5">
+                <svg width="15" height="15" viewBox="0 0 15 15" fill="none" stroke="currentColor" stroke-width="1.5">
                   <line x1="2" y1="13" x2="13" y2="2"/><polyline points="5,2 13,2 13,10"/>
                 </svg>
               </span>
@@ -95,31 +112,6 @@
             const project = PROJECTS.find((p) => p.id === Number(card.dataset.id))
             if (project) openOverlay(project, card)
         })
-
-        // Filter chips are derived from the data, so new categories need no edit here.
-        if (filterBar) {
-            const categories = ['All', ...new Set(PROJECTS.map((p) => p.category))]
-            filterBar.innerHTML = categories
-                .map(
-                    (c, i) =>
-                        `<button class="filter-btn${i === 0 ? ' active' : ''}" data-filter="${c}">${c}</button>`
-                )
-                .join('')
-
-            filterBar.addEventListener('click', (e) => {
-                const btn = e.target.closest('.filter-btn')
-                if (!btn) return
-
-                filterBar.querySelectorAll('.filter-btn').forEach((b) => b.classList.remove('active'))
-                btn.classList.add('active')
-
-                const filter = btn.dataset.filter
-                grid.querySelectorAll('.proj-card').forEach((card) => {
-                    const show = filter === 'All' || card.dataset.category === filter
-                    card.classList.toggle('is-hidden', !show)
-                })
-            })
-        }
     }
 
     /* ── PROJECT OVERLAY ── */
@@ -159,7 +151,10 @@
         const frag = document.createDocumentFragment()
         project.images.forEach((src, i) => {
             const img = document.createElement('img')
-            img.className = 'overlay-carousel-img' + (i === 0 ? ' active' : '')
+            img.className =
+                'overlay-carousel-img' +
+                (i === 0 ? ' active' : '') +
+                (project.tone ? ` tone-${project.tone}` : '')
             img.src = src
             img.alt = `${project.name} — view ${i + 1}`
             frag.appendChild(img)
