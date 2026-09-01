@@ -18,20 +18,30 @@ that anyone can open the files and edit them.
 
 ## Running it
 
-Use `preview_start` with the `site` config in `.claude/launch.json`, which
-serves the folder at http://localhost:4321. Verify changes in the browser
+Use `preview_start` with the `site` config in `.claude/launch.json`, which runs
+`.claude/serve.py` at http://localhost:4321. Verify changes in the browser
 rather than asking the user to check by hand.
+
+`serve.py` is a few lines of stdlib around `SimpleHTTPRequestHandler` (no
+dependency — the no-build rule still holds). It exists because plain
+`python3 -m http.server` breaks the edit-and-reload loop two ways: it sends no
+cache headers, so browsers serve stale `projects.js`/`styles.css` after an edit,
+and it omits `SO_REUSEADDR`, so a quick restart dies with "Address already in
+use". Both are fixed there. **If a change does not appear in the browser, the
+tab is holding a cache entry from before this server existed** — load the page
+once with a query string (`/?x=1`) to replace it.
 
 ## Files
 
-| File           | Purpose                                                           |
-| -------------- | ----------------------------------------------------------------- |
-| `index.html`   | All markup — nav, hero, about, portfolio, contact, footer, overlay |
-| `styles.css`   | All styling. Tokens at the top, responsive rules at the bottom     |
-| `projects.js`  | **Content.** Portfolio entries and marquee text                   |
-| `app.js`       | Behaviour — slideshow, grid, filters, overlay, nav, form          |
-| `assets/img/`  | Photography (`eton-*`, `chiara-*`, `deerpark-*`), renders, logo    |
-| `assets/fonts/`| Bebas Neue + DM Sans, self-hosted                                 |
+| File            | Purpose                                                           |
+| --------------- | ----------------------------------------------------------------- |
+| `index.html`    | All markup — nav, hero, about, portfolio, contact, footer, overlay |
+| `styles.css`    | All styling. Tokens at the top, responsive rules at the bottom     |
+| `projects.js`   | **Content.** Portfolio entries and marquee text                   |
+| `app.js`        | Behaviour — slideshow, grid, overlay, nav, form, copy-email        |
+| `assets/img/`   | Photography (`eton-*`, `chiara-*`, `shaw-*`, …), renders, logo     |
+| `assets/fonts/` | Bebas Neue + DM Sans, self-hosted                                 |
+| `.claude/serve.py` | Dev server. Not part of the deployed site                      |
 
 Content changes belong in `projects.js`, not in markup. The hero slideshow, the
 grid, and the project overlay all derive from it.
@@ -83,8 +93,9 @@ Everywhere else, use the tonal steps of `--white` — `--label`, `--label-dim`,
 
 ### Breakpoints
 
-`1200` gutters tighten, hero stats drop · `1024` portfolio to 2-up, overlay
-stacks · `900` nav becomes a drawer · `768` single column · `560` small phones.
+`1200` gutters tighten, the hero's Design/Develop/Build rail drops · `1024`
+portfolio to 2-up, overlay stacks · `900` nav becomes a drawer · `768` single
+column · `560` small phones.
 
 Always check a change at both mobile (390px) and desktop (1440px) before
 calling it done. The original prototype had no responsive rules whatsoever, so
@@ -92,7 +103,7 @@ anything inherited from it is suspect until verified at narrow widths.
 
 ## Load-bearing weirdness
 
-Two rules in `styles.css` look wrong and are not. Do not "clean up" either:
+Four rules look wrong and are not. Do not "clean up" any of them:
 
 1. **The nav's background lives on `nav::before`, never on `nav` itself.**
    `backdrop-filter` makes an element a containing block for its
@@ -103,28 +114,47 @@ Two rules in `styles.css` look wrong and are not. Do not "clean up" either:
    `logo.png` is black artwork on an opaque white background with **no alpha
    channel**. Inverting flips it to white-on-black; `screen` drops the black to
    transparent. If a real transparent PNG or SVG logo ever arrives, delete both
-   properties and this note.
+   properties and this note. `favicon.png` is the same mark pre-inverted and
+   padded square — browsers squash the 413×210 `logo.png` in a favicon slot.
+
+3. **`.nav-logo::before/::after` are held at `opacity: 0` until hover.**
+   They draw the stroke that forms around the logo. At their collapsed size
+   their 1px borders still paint, which showed as two stray dots beside the
+   mark. The opacity is what hides them, not the zero width/height.
+
+4. **The carousel arrows' four `drop-shadow()`s are declared at low alpha,
+   never omitted.** They are zero-blur offsets — one per direction — that trace
+   a hard outline around the glyph rather than a glow. A filter list can only
+   animate into another list of the same length, so dropping them from the base
+   state would make the hover snap instead of ease.
 
 ## Content status
 
-Everything user-facing is placeholder until told otherwise:
+Most user-facing copy is still placeholder until told otherwise:
 
-- Contact address, phone, and email in `index.html` are invented.
-- The five project **names** in `projects.js` are confirmed and correct.
-  Everything else about them — location, year, units, sq ft, description — is
-  still prototype copy.
-- Hero stats ("24+ projects", "16yr", "$2B") are unverified.
-- **All five projects now carry real photography.** The remaining renderings
-  (`render1–3`, `shaw-render`) are genuine project marketing renders, not AI
-  placeholders, and sit behind the photography in each gallery.
-- There is a sixth project in the shoot folder — **1022 Spadina Road** (four
-  images, exterior and interior). It is not in `PROJECTS` because the client's
-  list of five did not include it. Ask before adding it.
+- Contact address and phone in `index.html` are invented. The email
+  (`glen@urbanquestinc.com`) is **real** — it has a copy-to-clipboard button.
+- **"Established 1996"** is confirmed and appears in both the hero eyebrow and
+  the hero subtitle.
+- All six project **names** in `projects.js` are confirmed. Everything else —
+  location, year, units, description — is still prototype copy.
+- **All six projects carry real photography.** The renderings (`render1–3`,
+  `rose-render`) are genuine marketing renders, not AI placeholders. They sit
+  behind the photography in each gallery, except at Rose Club where the client
+  asked for the twilight render to lead.
+- **Every project needs a build year.** Five have one; `1020–1022 Spadina Road`
+  still shows `—` for year, units, and status, because the shoot folder supplied
+  only a name and four images.
 
-Three descriptions actively contradict the photographs now sitting next to them
-— Deer Park claims a "concealed motor court" and Chiara Gardens a "central
-garden mews", but both were shot as street-fronting rows. Those conflicts are
-flagged per-entry in `projects.js` and should be rewritten before launch.
+Descriptions that contradict their photographs — Deer Park's "concealed motor
+court" and Chiara Gardens' "central garden mews" were both shot as
+street-fronting rows; Rose Club's "hand-laid stone and warm oak" is a
+stacked-stone and cedar row. Flagged per-entry in `projects.js`; rewrite before
+launch.
+
+Door numbers do not match two project names: Shaw Street's photography shows
+466/468/470/478 *and* 31/33/35/39, and the project is called 456. Eton Terrace
+shows 239/333 on St Clair Ave W while its location reads "Midtown".
 
 Never present placeholder figures as real, and flag them when touching
 surrounding code.
@@ -136,10 +166,16 @@ misspelled and it has been corrected.
 
 - The contact form validates and fakes a send. There is no backend. See the
   `TODO` in `app.js`.
-- The first batch of shoot exports (`eton-1..6`, `chiara-1..5`, `deerpark-1..3`)
-  are only 1000 px wide and are used as supporting gallery frames. The later
-  hi-res files (`*-wide`, `*-bay`, `*-portico`, `*-winter`, `rose-*`) are
-  3024 px originals and carry the hero and the grid thumbnails.
+- Several sources are low-resolution and must not be upscaled: the first shoot
+  exports (`eton-1..6`, `chiara-3..5`, `deerpark-1..3`) are 1000 px, and
+  `rose-render`/`render1` are 800 px. They are fine at gallery and thumbnail
+  size but too soft for a full-bleed hero slide — which is why `HERO_IMAGES`
+  uses the 1800–3024 px files.
+- **Chiara skies are colour-corrected in the files themselves.** A hue-selective
+  blue lift, applied per-pixel via Core Image, gated on brightness *and*
+  blue-dominance. Both gates matter: shadowed cream stucco sits in the same hue
+  band, and without them the whole facade turns blue. Re-exporting any
+  `chiara-*` file from the original drops the correction.
 - Footer privacy link points to `#`.
 
 ## Conventions

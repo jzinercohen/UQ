@@ -83,7 +83,14 @@
     --faint: #3a3830;
     --border: rgba(245, 244, 240, 0.16);
 
-    --font-display: 'Bebas Neue', 'Helvetica Neue', Impact, sans-serif;
+    /* Display and body are the same family, separated by weight, size, and
+       tracking rather than by typeface. Bebas Neue was condensed and heavy —
+       the client read it as brutalist. DM Sans at 300 with open letter-spacing
+       keeps the modern, clean register but sits lighter and more architectural.
+       It is a variable font (300-600), already self-hosted, so the lighter
+       display weight costs no extra request. Bebas is still loaded for now;
+       drop its two @font-face blocks and .woff2 files once this is settled. */
+    --font-display: 'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
     /* Single knob for horizontal rhythm — every section inherits it. */
@@ -213,7 +220,11 @@ nav.scrolled {
     width: 0;
     height: 0;
     pointer-events: none;
-    transition: width 0.22s ease, height 0.22s ease 0.22s;
+    /* At zero size the two 1px borders still paint — they showed as a pair of
+       dots at opposite corners of the mark. Held at opacity 0 until hover so
+       nothing is visible until the stroke actually draws. */
+    opacity: 0;
+    transition: width 0.22s ease, height 0.22s ease 0.22s, opacity 0.12s ease 0.1s;
 }
 .nav-logo::before {
     top: -9px;
@@ -231,6 +242,9 @@ nav.scrolled {
 .nav-logo:hover::after {
     width: calc(100% + 18px);
     height: calc(100% + 18px);
+    opacity: 1;
+    /* No delay on the way in, so the stroke is visible as it draws. */
+    transition: width 0.22s ease, height 0.22s ease 0.22s, opacity 0.1s ease;
 }
 /* The logo ships as black artwork on an opaque white background (no alpha).
    invert() flips it to white-on-black, then `screen` drops the black to
@@ -239,7 +253,11 @@ nav.scrolled {
     height: 34px;
     filter: invert(1);
     mix-blend-mode: screen;
-    transform-origin: left center;
+    /* Must stay `center`. The stroke rectangle is drawn from the anchor box,
+       which `transform` does not resize — so scaling from `left center` grew
+       the mark rightward only and left it sitting off-centre inside the box.
+       Scaling about the centre keeps the two concentric. */
+    transform-origin: center;
     transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .nav-logo:hover img {
@@ -395,12 +413,14 @@ nav.scrolled {
     max-width: var(--maxw);
     width: 100%;
 }
+/* Sizes here are set for DM Sans, which is far wider than the condensed face
+   this replaced — the same pixel value would run a third wider on the page. */
 .hero-title {
     font-family: var(--font-display);
-    font-size: clamp(58px, 10vw, 156px);
-    font-weight: 400;
-    line-height: 0.88;
-    letter-spacing: 0.015em;
+    font-size: clamp(40px, 6.4vw, 96px);
+    font-weight: 300;
+    line-height: 1.02;
+    letter-spacing: 0.005em;
     color: #fff;
     margin-bottom: 32px;
 }
@@ -489,7 +509,31 @@ nav.scrolled {
     }
 }
 
-.hero-stats {
+/* Sits above the hero title. Deliberately quiet — it dates the practice
+   without competing with the display type underneath. */
+.hero-established {
+    font-size: 10px;
+    letter-spacing: 0.34em;
+    text-transform: uppercase;
+    color: var(--white);
+    font-weight: 500;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+.hero-established::before {
+    content: '';
+    display: block;
+    width: 34px;
+    height: 1px;
+    background: var(--label);
+    flex: none;
+}
+
+/* Replaces the old KPI column in the same slot on the right rail. Three words
+   rather than three figures, so nothing here needs verifying. */
+.hero-discipline {
     position: absolute;
     top: 50%;
     right: var(--gutter);
@@ -497,27 +541,27 @@ nav.scrolled {
     z-index: 2;
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    align-items: flex-end;
+    gap: 58px;
     transition: opacity 0.3s;
 }
-.stat-item {
-    text-align: right;
-}
-.stat-num {
+/* Each word sits on its own hairline. The rule is the full width of the word
+   plus its padding, so the three stack into a small ruled column. */
+.hero-discipline span {
     font-family: var(--font-display);
-    font-size: 40px;
-    color: var(--white);
+    font-size: 22px;
+    font-weight: 300;
     line-height: 1;
-}
-.stat-num span {
-    color: var(--label);
-}
-.stat-label {
-    font-size: 8.5px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.3em;
+    /* Tracking adds a trailing gap after the last letter; pull it back so the
+       text sits flush with the right edge of its rule. */
+    margin-right: -0.3em;
     text-transform: uppercase;
-    color: var(--light-grey);
-    margin-top: 4px;
+    color: var(--white);
+    display: block;
+    text-align: right;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
 }
 
 .hero-dots {
@@ -578,14 +622,24 @@ nav.scrolled {
 }
 .marquee-item {
     font-family: var(--font-display);
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: 400;
     letter-spacing: 0.3em;
     color: var(--black);
     padding: 0 28px;
 }
+/* A drawn hairline, not a glyph. The diamond this replaced was the only
+   ornamental mark on the site; a thin vertical rule matches the hairlines
+   already used for the discipline rail, the about divider, and the nav edge.
+   Sized in em so it tracks the marquee's own font-size across breakpoints. */
 .marquee-dot {
-    color: rgba(13, 13, 13, 0.35);
-    padding: 0 6px;
+    display: inline-block;
+    width: 1px;
+    height: 12px;
+    /* Sits the rule on the cap-height of the words beside it rather than on
+       the baseline. */
+    vertical-align: -0.1em;
+    background: rgba(13, 13, 13, 0.32);
 }
 @keyframes marquee {
     0% {
@@ -600,21 +654,34 @@ nav.scrolled {
 .about-outer {
     background: var(--black);
 }
+/* Both columns are centred on the same axis: `align-items: center` balances
+   them vertically, and the text column is a centred block of its own so the
+   copy sits against the image rather than drifting to the far left of a
+   half-width column. `justify-items` keeps the pair centred in the grid. */
+/* Text holds the left gutter, image holds the right, and the space between
+   them is the gap plus whatever the copy does not use. The two are no longer
+   centred against each other on purpose: the run of white space through the
+   middle is what separates the reading column from the photography. */
 #about {
     padding: 140px var(--gutter);
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 90px;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 100px;
     align-items: center;
     max-width: var(--maxw);
     margin: 0 auto;
 }
+.about-left {
+    width: 100%;
+    max-width: 440px;
+    justify-self: start;
+}
 .about-heading {
     font-family: var(--font-display);
-    font-size: clamp(46px, 4.5vw, 76px);
-    font-weight: 400;
-    line-height: 0.93;
-    letter-spacing: 0.02em;
+    font-size: clamp(32px, 3.3vw, 54px);
+    font-weight: 300;
+    line-height: 1.14;
+    letter-spacing: 0.03em;
     color: var(--white);
     margin-bottom: 30px;
 }
@@ -639,21 +706,59 @@ nav.scrolled {
 }
 .about-right {
     position: relative;
-}
-.about-image-main {
     width: 100%;
-    aspect-ratio: 4/5;
+    justify-self: end;
+}
+/* Slides stack on top of each other, so the wrapper carries the box and the
+   images fill it absolutely. 3:2 because every frame in APPROACH_IMAGES is a
+   ~1.5 landscape: at 1:1 they were cropped hard at the sides, and the strip of
+   bright pavement left along the bottom edge read as a pale line against the
+   black page.
+
+   7/5 rather than a true 3/2: the three elevations are ~1.5 and the Shaw entry
+   detail is 1.33, so this sits between them and no frame loses more than about
+   5% to the crop. */
+.about-slides {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 7/5;
+    overflow: hidden;
+}
+.about-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     display: block;
+    opacity: 0;
+    transition: opacity 1.1s ease;
 }
-.about-image-accent {
-    position: absolute;
-    bottom: -28px;
-    left: -28px;
-    width: 46%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border: 5px solid var(--black);
+.about-slide.active {
+    opacity: 1;
+}
+/* Same dots as the hero, sat under the frame rather than over it — the
+   photography here runs edge to edge and an overlaid control would land on
+   the image itself. */
+.about-dots {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 20px;
+}
+.about-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(245, 244, 240, 0.28);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.3s;
+}
+.about-dot.active {
+    background: var(--white);
+    transform: scale(1.5);
 }
 .about-geo {
     position: absolute;
@@ -680,10 +785,10 @@ nav.scrolled {
 }
 .portfolio-heading {
     font-family: var(--font-display);
-    font-size: clamp(46px, 4.5vw, 76px);
-    font-weight: 400;
-    line-height: 0.93;
-    letter-spacing: 0.02em;
+    font-size: clamp(32px, 3.3vw, 54px);
+    font-weight: 300;
+    line-height: 1.14;
+    letter-spacing: 0.03em;
 }
 .portfolio-grid {
     display: grid;
@@ -693,15 +798,17 @@ nav.scrolled {
     margin: 0 auto;
 }
 
-/* Editorial rhythm: two wide cards, then a row of three. Aspect ratios (not
-   fixed pixel heights) so the composition survives every viewport width. */
+/* Editorial rhythm: two wide cards, then the remaining four in one row.
+   span 3 (not 4) is what puts all four on that row — at span 4 the sixth
+   project dropped onto a line of its own. Aspect ratios rather than fixed
+   pixel heights, so the composition survives every viewport width. */
 .proj-card {
     position: relative;
     overflow: hidden;
     cursor: pointer;
     background: #111;
-    grid-column: span 4;
-    aspect-ratio: 5/4;
+    grid-column: span 3;
+    aspect-ratio: 4/5;
     border: none;
     padding: 0;
     text-align: left;
@@ -762,8 +869,9 @@ nav.scrolled {
 }
 .proj-name {
     font-family: var(--font-display);
-    font-size: 24px;
-    letter-spacing: 0.04em;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
     color: var(--white);
     margin-bottom: 5px;
     line-height: 1.1;
@@ -813,10 +921,10 @@ nav.scrolled {
 }
 .contact-heading {
     font-family: var(--font-display);
-    font-size: clamp(46px, 4.5vw, 76px);
-    font-weight: 400;
-    line-height: 0.93;
-    letter-spacing: 0.02em;
+    font-size: clamp(32px, 3.3vw, 54px);
+    font-weight: 300;
+    line-height: 1.14;
+    letter-spacing: 0.03em;
     margin-bottom: 22px;
 }
 .contact-heading em {
@@ -861,6 +969,49 @@ nav.scrolled {
 }
 .contact-item-value a:hover {
     color: var(--white);
+}
+
+/* ── COPY EMAIL ── */
+.contact-email {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    /* Anchors the toast, which is positioned against this row. */
+    position: relative;
+}
+.copy-btn {
+    background: none;
+    border: 1px solid var(--rule);
+    padding: 5px;
+    line-height: 0;
+    color: var(--label);
+    cursor: pointer;
+    flex: none;
+    transition: color 0.2s, border-color 0.2s;
+}
+.copy-btn:hover,
+.copy-btn:focus-visible {
+    color: var(--white);
+    border-color: rgba(245, 244, 240, 0.45);
+}
+/* Sits beside the button and fades out on its own; `visibility` rides the
+   same transition so a hidden toast cannot be read out or clicked. */
+.copy-toast {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-4px);
+    transition: opacity 0.45s ease, transform 0.45s ease, visibility 0s linear 0.45s;
+}
+.copy-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s;
 }
 
 .contact-form {
@@ -1050,13 +1201,21 @@ footer {
    disk untouched, so a properly graded set can drop in later and this comes
    straight back out. Keep it subtle — this is a lift, not a filter. */
 .tone-warm {
-    filter: brightness(1.07) saturate(1.16) sepia(0.12) hue-rotate(-6deg);
+    /* The sepia + hue-rotate this used to carry pulled everything toward
+       yellow, which cancelled the blue now baked into the Chiara skies. Left
+       as a plain brightness/saturation lift so the two corrections agree. */
+    filter: brightness(1.05) saturate(1.12);
 }
 /* No box, no fill, no blur — just the mark itself.
    The arrow is near-black and fully opaque from the start: at lower opacity it
    vanished entirely on the darker frames. What keeps a black glyph readable on
-   a dark photograph is the pair of light halos below — a tight one for edge
-   definition and a wide one for separation — not a panel behind it. */
+   a dark photograph is the black edge below, not a panel behind it.
+
+   The four drop-shadows are offsets at zero blur, one per direction, which
+   traces a hard outline around the glyph rather than the soft halo this used
+   to have. They are declared at low alpha rather than omitted so the hover
+   state interpolates — a filter list can only animate into another list with
+   the same number of entries; going from `none` would snap. */
 .carousel-arrow {
     position: absolute;
     top: 50%;
@@ -1067,21 +1226,31 @@ footer {
     background: none;
     border: none;
     padding: 0;
-    color: #141414;
+    color: var(--white);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    filter: drop-shadow(0 0 3px rgba(245, 244, 240, 0.95)) drop-shadow(0 0 9px rgba(245, 244, 240, 0.65));
-    transition: filter 0.25s, transform 0.25s;
+    filter:
+        drop-shadow(1px 0 0 rgba(8, 8, 8, 0.45))
+        drop-shadow(-1px 0 0 rgba(8, 8, 8, 0.45))
+        drop-shadow(0 1px 0 rgba(8, 8, 8, 0.45))
+        drop-shadow(0 -1px 0 rgba(8, 8, 8, 0.45));
+    transition: filter 0.28s ease, transform 0.25s ease;
 }
 .carousel-arrow svg {
     width: 26px;
     height: 26px;
     stroke-width: 2;
 }
-.carousel-arrow:hover {
-    filter: drop-shadow(0 0 4px rgba(245, 244, 240, 1)) drop-shadow(0 0 14px rgba(245, 244, 240, 0.85));
+/* Hover thickens the outline to a full black stroke. */
+.carousel-arrow:hover,
+.carousel-arrow:focus-visible {
+    filter:
+        drop-shadow(1.5px 0 0 rgba(8, 8, 8, 0.95))
+        drop-shadow(-1.5px 0 0 rgba(8, 8, 8, 0.95))
+        drop-shadow(0 1.5px 0 rgba(8, 8, 8, 0.95))
+        drop-shadow(0 -1.5px 0 rgba(8, 8, 8, 0.95));
 }
 .carousel-prev {
     left: 28px;
@@ -1104,8 +1273,9 @@ footer {
     align-items: center;
     gap: 12px;
     font-family: var(--font-display);
-    font-size: 18px;
-    letter-spacing: 0.1em;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
     color: var(--white);
     background: rgba(13, 13, 13, 0.4);
     backdrop-filter: blur(10px);
@@ -1183,10 +1353,10 @@ footer {
 }
 .overlay-title {
     font-family: var(--font-display);
-    font-size: clamp(40px, 4vw, 68px);
-    font-weight: 400;
-    line-height: 0.93;
-    letter-spacing: 0.02em;
+    font-size: clamp(26px, 2.7vw, 44px);
+    font-weight: 300;
+    line-height: 1.14;
+    letter-spacing: 0.03em;
     color: var(--white);
     margin-bottom: 10px;
 }
@@ -1292,8 +1462,8 @@ footer {
         gap: 60px;
         padding: 110px var(--gutter);
     }
-    /* Stats would collide with the hero title once the column narrows. */
-    .hero-stats {
+    /* The right rail would collide with the hero title once it narrows. */
+    .hero-discipline {
         display: none !important;
     }
 }
@@ -1418,18 +1588,11 @@ footer {
     .about-body {
         max-width: none;
     }
-    /* The offset accent image needs room once it is no longer beside text. */
     .about-right {
         margin-bottom: 28px;
     }
     .about-image-main {
         aspect-ratio: 3/4;
-    }
-    .about-image-accent {
-        bottom: -20px;
-        left: -12px;
-        width: 40%;
-        border-width: 4px;
     }
     .about-geo {
         top: -12px;
