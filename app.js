@@ -143,8 +143,11 @@
 
         const next = () => goTo((current + 1) % slides.length)
         const start = () => {
-            // Offset from the hero's 5.5s so the two are not in lockstep.
-            timer = window.setInterval(next, 6200)
+            // Slower than the hero: this sits beside body copy, so a frame
+            // needs to hold long enough to be read past rather than pulling
+            // the eye back every few seconds. Also keeps the two slideshows
+            // out of lockstep.
+            timer = window.setInterval(next, 9000)
         }
         const stop = () => window.clearInterval(timer)
 
