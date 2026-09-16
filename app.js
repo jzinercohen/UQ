@@ -5,6 +5,21 @@
 ;(function () {
     'use strict'
 
+    /* ── CONTACT FORM ENDPOINT ────────────────────────────────────────────────
+       Formspree delivers submissions to whichever address the form is set to
+       in their dashboard (glen@urbanquestinc.com). Create the form there, then
+       paste its id below — the dashboard URL ends in it, e.g.
+       https://formspree.io/f/abcdwxyz  ->  FORM_ID = 'abcdwxyz'
+
+       While this is still the placeholder the form refuses to claim it sent
+       anything, and points people at the email address instead. That is
+       deliberate: silently swallowing an enquiry while saying "thank you" is
+       worse than having no form at all. */
+    const FORM_ID = 'YOUR_FORM_ID'
+    const FORM_ENDPOINT = `https://formspree.io/f/${FORM_ID}`
+    const FORM_CONFIGURED = FORM_ID !== 'YOUR_FORM_ID'
+    const CONTACT_EMAIL = 'glen@urbanquestinc.com'
+
     const $ = (sel) => document.querySelector(sel)
     const $$ = (sel) => Array.from(document.querySelectorAll(sel))
 
@@ -16,6 +31,27 @@
     const frame = (entry) =>
         typeof entry === 'string' ? { src: entry } : entry
     const srcOf = (entry) => frame(entry).src
+
+    /* "a", "a and b", "a, b, and c" — so validation messages read as a
+       sentence instead of a comma-separated dump. */
+    function listToSentence(items) {
+        if (items.length <= 1) return items[0] || ''
+        if (items.length === 2) return `${items[0]} and ${items[1]}`
+        return `${items.slice(0, -1).join(', ')}, and ${items[items.length - 1]}`
+    }
+
+    /* Grid cards default to filling their box. A card can opt out via
+       `thumb: { src, fit, position }` — used where cropping to fill would cut
+       into artwork that needs to be seen whole. */
+    function cardFraming(project) {
+        const shot = frame(project.thumb || project.images[0])
+        return [
+            shot.fit ? `object-fit:${shot.fit}` : '',
+            shot.position ? `object-position:${shot.position}` : '',
+        ]
+            .filter(Boolean)
+            .join(';')
+    }
 
     /* ── MARQUEE ──────────────────────────────────────────────────────────────
        The strip is duplicated because the keyframe translates -50%: the second
@@ -175,7 +211,8 @@
             (p) => `
             <button class="proj-card reveal" data-id="${p.id}"
                     aria-label="View project: ${p.name}">
-              <img class="proj-card-img${p.tone ? ` tone-${p.tone}` : ''}" src="${srcOf(p.thumb || p.images[0])}" alt="${p.name}" loading="lazy">
+              <img class="proj-card-img${p.tone ? ` tone-${p.tone}` : ''}" src="${srcOf(p.thumb || p.images[0])}" alt="${p.name}" loading="lazy"
+                   style="${cardFraming(p)}">
               <span class="proj-card-overlay"></span>
               <span class="proj-card-info">
                 <span class="proj-tag">${p.tag}</span>
@@ -223,7 +260,7 @@
         $('#overlayTitle').textContent = project.name
         $('#overlayLocation').textContent = project.location
         $('#overlayDesc').textContent = project.desc
-        $('#specUnits').textContent = project.units
+        $('#specHomes').textContent = project.homes
         $('#specStatus').textContent = project.status
         $('#specYear').textContent = project.year
 
@@ -250,7 +287,7 @@
         $('#carouselDots').innerHTML = project.images
             .map(
                 (_, i) =>
-                    `<button class="carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="View ${i + 1}"></button>`
+                    `<button class="carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="View image ${i + 1} of ${project.images.length}"></button>`
             )
             .join('')
 
@@ -387,27 +424,96 @@
             e.preventDefault()
 
             if (!form.checkValidity()) {
-                status.textContent = 'Fill in the required fields before sending.'
+                // Name what is missing rather than saying "required fields":
+                // the person then knows where to look without hunting the form
+                // for the browser's own outline.
+                const missing = Array.from(form.querySelectorAll('.form-input'))
+                    .filter((field) => !field.checkValidity())
+                    .map((field) => {
+                        const label = form.querySelector(`label[for="${field.id}"]`)
+                        return label ? label.textContent.toLowerCase() : field.name
+                    })
+
+                // Naming one or two missing fields helps. Naming four just
+                // restates the empty form, so past that say it plainly. No
+                // "marked below" either: the browser only outlines the first
+                // invalid field, so the phrase promised more than it delivered.
+                status.textContent = !missing.length
+                    ? 'Something in the form needs another look before this can send.'
+                    : missing.length > 2
+                      ? 'A few details are missing.'
+                      : `Add your ${listToSentence(missing)} and we'll send this through.`
                 status.classList.add('error')
                 form.reportValidity()
+                return
+            }
+
+            // Refuse to fake it. Without an endpoint there is nowhere for this
+            // to go, so say so rather than showing a thank-you.
+            if (!FORM_CONFIGURED) {
+                status.innerHTML =
+                    `The form isn't connected yet. Please email ` +
+                    `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a> directly.`
+                status.classList.add('error')
                 return
             }
 
             status.textContent = ''
             status.classList.remove('error')
             submit.disabled = true
-            submit.textContent = 'Sending…'
+            submit.textContent = 'Sending your enquiry…'
 
-            // TODO: replace with a real POST once an endpoint exists.
-            window.setTimeout(() => {
-                form.innerHTML = `
+            sendEnquiry(form)
+                .then(() => {
+                    form.innerHTML = `
                     <div class="form-sent">
                       <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
                            stroke="currentColor" stroke-width="1.5"><polyline points="2,9 7,14 16,4"/></svg>
-                      Thank you. We'll be in touch within 48 hours.
+                      Thank you. We'll be in touch.
                     </div>`
-            }, 1000)
+                })
+                .catch((err) => {
+                    // Never lose the enquiry silently: if the request failed,
+                    // the message is still in the fields, and the fallback is
+                    // an address they can use right now.
+                    status.innerHTML =
+                        `${err.message} Your message is still here, or email ` +
+                        `<a href="mailto:${CONTACT_EMAIL}">${CONTACT_EMAIL}</a>.`
+                    status.classList.add('error')
+                    submit.disabled = false
+                    submit.textContent = 'Send enquiry'
+                })
         })
+    }
+
+    /* POSTs the form to Formspree. `Accept: application/json` is what stops
+       Formspree replying with its own redirect page, so the visitor stays on
+       the site and we control the confirmation. */
+    async function sendEnquiry(form) {
+        let res
+        try {
+            res = await fetch(FORM_ENDPOINT, {
+                method: 'POST',
+                headers: { Accept: 'application/json' },
+                body: new FormData(form),
+            })
+        } catch {
+            throw new Error("That didn't send, likely a connection problem.")
+        }
+
+        if (res.ok) return
+
+        // Formspree returns its own reasons (inactive form, monthly limit
+        // reached, blocked as spam); surface the first rather than a generic
+        // failure, since they need different fixes.
+        let detail = ''
+        try {
+            const body = await res.json()
+            detail = (body.errors && body.errors[0] && body.errors[0].message) || ''
+        } catch {
+            /* no JSON body — fall through to the generic message */
+        }
+        throw new Error(detail ? `${detail}.` : "That didn't send.")
     }
 
     /* ── COPY EMAIL ── */
@@ -442,7 +548,7 @@
                 await copy(link.textContent.trim())
                 toast.textContent = 'Email copied'
             } catch {
-                toast.textContent = 'Press ⌘C to copy'
+                toast.textContent = 'Copy blocked, select the address'
             }
             toast.classList.add('show')
             window.clearTimeout(timer)

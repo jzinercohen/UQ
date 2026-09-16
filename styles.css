@@ -272,7 +272,7 @@ nav.scrolled {
 .nav-links a {
     color: rgba(245, 244, 240, 0.75);
     text-decoration: none;
-    font-size: 10.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     font-weight: 500;
@@ -430,7 +430,7 @@ nav.scrolled {
     color: var(--accent-light);
 }
 .hero-subtitle {
-    font-size: 15px;
+    font-size: clamp(15px, 1.12vw, 18px);
     font-weight: 300;
     color: var(--light-grey);
     max-width: 440px;
@@ -479,36 +479,6 @@ nav.scrolled {
 .btn-ghost:hover {
     border-color: var(--white);
     color: var(--white);
-}
-
-.hero-scroll-cue {
-    position: absolute;
-    bottom: 44px;
-    right: var(--gutter);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    color: var(--light-grey);
-    font-size: 8.5px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-}
-.scroll-line {
-    width: 1px;
-    height: 56px;
-    background: linear-gradient(to bottom, var(--label), transparent);
-    animation: scrollPulse 2.2s ease-in-out infinite;
-}
-@keyframes scrollPulse {
-    0%,
-    100% {
-        opacity: 0.35;
-    }
-    50% {
-        opacity: 0.9;
-    }
 }
 
 /* Sits above the hero title. Deliberately quiet — it dates the practice
@@ -607,7 +577,7 @@ nav.scrolled {
 
 /* ── SHARED ── */
 .section-label {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.35em;
     text-transform: uppercase;
     color: var(--label);
@@ -707,7 +677,7 @@ nav.scrolled {
     font-style: normal;
 }
 .about-body {
-    font-size: 14.5px;
+    font-size: clamp(14.5px, 1.08vw, 17.5px);
     line-height: 1.85;
     color: var(--body-grey);
     font-weight: 300;
@@ -817,17 +787,17 @@ nav.scrolled {
     margin: 0 auto;
 }
 
-/* Editorial rhythm: two wide cards, then the remaining four in one row.
-   span 3 (not 4) is what puts all four on that row — at span 4 the sixth
-   project dropped onto a line of its own. Aspect ratios rather than fixed
-   pixel heights, so the composition survives every viewport width. */
+/* Three rows of two. Every card is span 6 on the 12-column grid, so the
+   earlier nth-child(1)/(2) override is redundant but harmless. Aspect ratios
+   rather than fixed pixel heights, so the composition survives every
+   viewport width. */
 .proj-card {
     position: relative;
     overflow: hidden;
     cursor: pointer;
     background: #111;
-    grid-column: span 3;
-    aspect-ratio: 4/5;
+    grid-column: span 6;
+    aspect-ratio: 7/5;
     border: none;
     padding: 0;
     text-align: left;
@@ -879,7 +849,7 @@ nav.scrolled {
     transform: translateY(0);
 }
 .proj-tag {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--label);
@@ -900,7 +870,7 @@ nav.scrolled {
     font-size: 34px;
 }
 .proj-location {
-    font-size: 11.5px;
+    font-size: clamp(13px, 0.95vw, 15.5px);
     color: var(--light-grey);
     font-weight: 400;
 }
@@ -951,7 +921,7 @@ nav.scrolled {
     font-style: normal;
 }
 .contact-body {
-    font-size: 14.5px;
+    font-size: clamp(14.5px, 1.08vw, 17.5px);
     line-height: 1.85;
     color: var(--body-grey);
     font-weight: 300;
@@ -969,14 +939,14 @@ nav.scrolled {
     gap: 5px;
 }
 .contact-item-label {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--label);
     font-weight: 500;
 }
 .contact-item-value {
-    font-size: 14.5px;
+    font-size: clamp(14.5px, 1.05vw, 17px);
     color: var(--white);
     font-weight: 400;
     line-height: 1.6;
@@ -1049,7 +1019,7 @@ nav.scrolled {
     gap: 7px;
 }
 .form-label {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: #6a6660;
@@ -1109,6 +1079,16 @@ textarea.form-input {
     cursor: default;
     transform: none;
 }
+/* The spam honeypot. Moved off-screen rather than display:none, because
+   some bots deliberately skip hidden inputs and would sail past it. */
+.form-gotcha {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
 .form-status {
     font-size: 13px;
     letter-spacing: 0.04em;
@@ -1149,7 +1129,7 @@ footer {
     opacity: 0.45;
 }
 .footer-copy {
-    font-size: 10.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     color: var(--faint);
     letter-spacing: 0.04em;
 }
@@ -1364,7 +1344,7 @@ footer {
     color: var(--white);
 }
 .overlay-tag {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.32em;
     text-transform: uppercase;
     color: var(--label);
@@ -1396,7 +1376,7 @@ footer {
     flex: none;
 }
 .overlay-desc {
-    font-size: 14.5px;
+    font-size: clamp(15px, 1.12vw, 18px);
     line-height: 1.85;
     color: #8a8680;
     font-weight: 300;
@@ -1410,7 +1390,7 @@ footer {
     padding-top: 36px;
 }
 .spec-label {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--label);
@@ -1591,9 +1571,6 @@ footer {
     .hero-subtitle {
         font-size: 14px;
         margin-bottom: 32px;
-    }
-    .hero-scroll-cue {
-        display: none;
     }
     .hero-dots {
         bottom: 32px;
