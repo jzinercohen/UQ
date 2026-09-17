@@ -124,10 +124,52 @@ Two things in `styles.css` look odd but are load-bearing:
 
 ## Deploying
 
-It's static, so anything works. Drag the folder onto Netlify, or:
+The site is hosted on **MSP corporate hosting**, managed through **cPanel**.
+Files are uploaded by hand; nothing pulls from GitHub, so **merging a PR does
+not put anything live**. Git keeps the code safe and reviewable — publishing is
+a separate, manual step.
 
-```sh
-npx vercel deploy
+### The deploy loop
+
+1. Make the change locally and verify it in the browser.
+2. Commit, push, and merge to `main` (so the repo matches what is live).
+3. **cPanel → turn NGINX caching OFF.**
+4. Upload the changed files to the web root.
+5. **Turn NGINX caching back ON, then clear the cache.**
+
+Steps 3 and 5 are the ones that get skipped, and skipping them is why a change
+can look like it did not deploy. NGINX will happily keep serving the previous
+`styles.css` or `projects.js` long after the new file is on disk.
+
+> **Current state: NGINX caching is INACTIVE.** While it stays off, uploads
+> appear immediately and steps 3 and 5 can be ignored. Once someone turns it
+> on, they become mandatory. Update this line if that changes.
+
+### What to upload
+
+The repository root is the site, but **do not upload the whole folder.** Ship
+only what the site actually loads:
+
+```
+index.html
+styles.css
+projects.js
+app.js
+assets/          (fonts and images — keep the structure)
 ```
 
-No build command, no output directory — the repository root *is* the site.
+Leave out `CLAUDE.md`, `README.md`, `.claude/`, `reference/`, and `.git/`.
+They are development material; `reference/` contains the original prototype.
+
+`index.html` goes at the top level of the web root with `assets/` beside it.
+Upload the *contents* of the folder, not the folder itself, or the site lands
+at `/foldername/`.
+
+### Requirements
+
+- **HTTPS is required, not optional.** The copy-to-clipboard button on the
+  contact email uses the async Clipboard API, which browsers disable on plain
+  `http://`. It degrades to an error message rather than failing loudly.
+- The `?v=` query strings on the CSS and JS links in `index.html` are a cache
+  buster. If a change will not show up even after clearing the NGINX cache,
+  bump that number and re-upload.

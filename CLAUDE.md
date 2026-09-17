@@ -31,6 +31,20 @@ use". Both are fixed there. **If a change does not appear in the browser, the
 tab is holding a cache entry from before this server existed** — load the page
 once with a query string (`/?x=1`) to replace it.
 
+## Deploying
+
+Hosted on MSP corporate hosting via cPanel, uploaded by hand. **Nothing pulls
+from GitHub — merging a PR does not put anything live.** See the Deploying
+section of `README.md` for the full loop.
+
+The part that bites: if **NGINX caching** is on, it must be turned off in
+cPanel before uploading and turned back on (and the cache cleared) afterwards,
+or the old `styles.css` / `projects.js` keeps being served. It is currently
+**inactive**, so uploads appear immediately — but do not assume that.
+
+Never upload the whole repo. Only `index.html`, `styles.css`, `projects.js`,
+`app.js`, and `assets/`.
+
 ## Files
 
 | File            | Purpose                                                           |
