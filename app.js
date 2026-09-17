@@ -5,8 +5,32 @@
 ;(function () {
     'use strict'
 
+
     const $ = (sel) => document.querySelector(sel)
     const $$ = (sel) => Array.from(document.querySelectorAll(sel))
+
+    /* An entry in PROJECTS[].images is either a plain path or an object
+       carrying framing overrides. The overlay pane is portrait, so `cover`
+       crops the sides off landscape frames — `position` re-aims that crop and
+       `fit: 'contain'` opts a shot out of it entirely when the full frame is
+       the point. Normalised here so the rest of the code sees one shape. */
+    const frame = (entry) =>
+        typeof entry === 'string' ? { src: entry } : entry
+    const srcOf = (entry) => frame(entry).src
+
+
+    /* Grid cards default to filling their box. A card can opt out via
+       `thumb: { src, fit, position }` — used where cropping to fill would cut
+       into artwork that needs to be seen whole. */
+    function cardFraming(project) {
+        const shot = frame(project.thumb || project.images[0])
+        return [
+            shot.fit ? `object-fit:${shot.fit}` : '',
+            shot.position ? `object-position:${shot.position}` : '',
+        ]
+            .filter(Boolean)
+            .join(';')
+    }
 
     /* ── MARQUEE ──────────────────────────────────────────────────────────────
        The strip is duplicated because the keyframe translates -50%: the second
@@ -15,8 +39,11 @@
         const inner = $('#marqueeInner')
         if (!inner) return
 
+        // The separator is drawn by CSS as a hairline rule, so the span is
+        // deliberately empty — there is no glyph to read out. The whole strip
+        // is aria-hidden anyway; it is decoration, and the words repeat.
         const html = MARQUEE_ITEMS.map(
-            (item) => `<span class="marquee-item">${item}</span><span class="marquee-dot">◆</span>`
+            (item) => `<span class="marquee-item">${item}</span><span class="marquee-dot"></span>`
         ).join('')
         inner.innerHTML = html + html
     }
@@ -82,6 +109,78 @@
         start()
     }
 
+    /* ── APPROACH SLIDESHOW ──────────────────────────────────────────────────
+       Same behaviour as the hero: cross-fade on a timer, with dots that jump
+       to a slide and restart the clock. Slides and dots are both built from
+       APPROACH_IMAGES, so the two can never fall out of sync. */
+    function initApproachSlideshow() {
+        const wrap = $('#aboutSlides')
+        const dotWrap = $('#aboutDots')
+        if (!wrap || typeof APPROACH_IMAGES === 'undefined' || !APPROACH_IMAGES.length) return
+
+        wrap.innerHTML = APPROACH_IMAGES.map(
+            (img, i) =>
+                `<img class="about-slide${i === 0 ? ' active' : ''}" src="${img.src}"
+                      alt="${img.alt}" loading="lazy"
+                      ${img.position ? `style="object-position:${img.position}"` : ''}>`
+        ).join('')
+
+        if (dotWrap) {
+            dotWrap.innerHTML = APPROACH_IMAGES.map(
+                (img, i) =>
+                    `<button class="about-dot${i === 0 ? ' active' : ''}" data-idx="${i}" role="tab"
+                             aria-label="${img.alt}" aria-selected="${i === 0}"></button>`
+            ).join('')
+        }
+
+        const slides = $$('.about-slide')
+        const dots = $$('.about-dot')
+        if (slides.length < 2) return
+
+        let current = 0
+        let timer = null
+
+        function goTo(idx) {
+            slides[current].classList.remove('active')
+            if (dots[current]) {
+                dots[current].classList.remove('active')
+                dots[current].setAttribute('aria-selected', 'false')
+            }
+
+            current = idx
+
+            slides[current].classList.add('active')
+            if (dots[current]) {
+                dots[current].classList.add('active')
+                dots[current].setAttribute('aria-selected', 'true')
+            }
+        }
+
+        const next = () => goTo((current + 1) % slides.length)
+        const start = () => {
+            // Slower than the hero: this sits beside body copy, so a frame
+            // needs to hold long enough to be read past rather than pulling
+            // the eye back every few seconds. Also keeps the two slideshows
+            // out of lockstep.
+            timer = window.setInterval(next, 9000)
+        }
+        const stop = () => window.clearInterval(timer)
+
+        dots.forEach((dot) => {
+            dot.addEventListener('click', () => {
+                stop()
+                goTo(Number(dot.dataset.idx))
+                start()
+            })
+        })
+
+        document.addEventListener('visibilitychange', () => {
+            document.hidden ? stop() : start()
+        })
+
+        start()
+    }
+
     /* ── PORTFOLIO GRID ── */
     function initPortfolio() {
         const grid = $('#portfolioGrid')
@@ -90,8 +189,9 @@
         grid.innerHTML = PROJECTS.map(
             (p) => `
             <button class="proj-card reveal" data-id="${p.id}"
-                    aria-label="View project — ${p.name}">
-              <img class="proj-card-img${p.tone ? ` tone-${p.tone}` : ''}" src="${p.images[0]}" alt="${p.name}" loading="lazy">
+                    aria-label="View project: ${p.name}">
+              <img class="proj-card-img${p.tone ? ` tone-${p.tone}` : ''}" src="${srcOf(p.thumb || p.images[0])}" alt="${p.name}" loading="lazy"
+                   style="${cardFraming(p)}">
               <span class="proj-card-overlay"></span>
               <span class="proj-card-info">
                 <span class="proj-tag">${p.tag}</span>
@@ -139,8 +239,7 @@
         $('#overlayTitle').textContent = project.name
         $('#overlayLocation').textContent = project.location
         $('#overlayDesc').textContent = project.desc
-        $('#specUnits').textContent = project.units
-        $('#specSqft').textContent = project.sqft
+        $('#specHomes').textContent = project.homes
         $('#specStatus').textContent = project.status
         $('#specYear').textContent = project.year
 
@@ -149,14 +248,17 @@
         // reverse the images, leaving updateCarousel() pointing at the wrong one.
         pane.querySelectorAll('.overlay-carousel-img').forEach((n) => n.remove())
         const frag = document.createDocumentFragment()
-        project.images.forEach((src, i) => {
+        project.images.forEach((entry, i) => {
+            const shot = frame(entry)
             const img = document.createElement('img')
             img.className =
                 'overlay-carousel-img' +
                 (i === 0 ? ' active' : '') +
                 (project.tone ? ` tone-${project.tone}` : '')
-            img.src = src
-            img.alt = `${project.name} — view ${i + 1}`
+            img.src = shot.src
+            if (shot.fit) img.style.objectFit = shot.fit
+            if (shot.position) img.style.objectPosition = shot.position
+            img.alt = `${project.name}, view ${i + 1}`
             frag.appendChild(img)
         })
         pane.prepend(frag)
@@ -164,7 +266,7 @@
         $('#carouselDots').innerHTML = project.images
             .map(
                 (_, i) =>
-                    `<button class="carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="View ${i + 1}"></button>`
+                    `<button class="carousel-dot${i === 0 ? ' active' : ''}" data-idx="${i}" aria-label="View image ${i + 1} of ${project.images.length}"></button>`
             )
             .join('')
 
@@ -289,38 +391,43 @@
         els.forEach((el) => obs.observe(el))
     }
 
-    /* ── CONTACT FORM ──────────────────────────────────────────────────────────
-       No backend yet — this validates and fakes a send. Wire the submit handler
-       to a real endpoint (Formspree, Netlify Forms, or an API route) before launch. */
-    function initContactForm() {
-        const form = $('#contactForm')
-        const status = $('#formStatus')
-        const submit = form.querySelector('.form-submit')
+    /* ── COPY EMAIL ── */
+    function initCopyEmail() {
+        const btn = $('#copyEmailBtn')
+        const link = $('#contactEmail')
+        const toast = $('#copyToast')
+        if (!btn || !link || !toast) return
 
-        form.addEventListener('submit', (e) => {
-            e.preventDefault()
+        let timer = null
 
-            if (!form.checkValidity()) {
-                status.textContent = 'Fill in the required fields before sending.'
-                status.classList.add('error')
-                form.reportValidity()
+        async function copy(text) {
+            // The async clipboard API needs a secure context, so it is absent
+            // on plain http:// — fall back to a throwaway selection copy.
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text)
                 return
             }
+            const scratch = document.createElement('textarea')
+            scratch.value = text
+            scratch.setAttribute('readonly', '')
+            scratch.style.position = 'fixed'
+            scratch.style.opacity = '0'
+            document.body.appendChild(scratch)
+            scratch.select()
+            document.execCommand('copy')
+            scratch.remove()
+        }
 
-            status.textContent = ''
-            status.classList.remove('error')
-            submit.disabled = true
-            submit.textContent = 'Sending…'
-
-            // TODO: replace with a real POST once an endpoint exists.
-            window.setTimeout(() => {
-                form.innerHTML = `
-                    <div class="form-sent">
-                      <svg width="18" height="18" viewBox="0 0 18 18" fill="none"
-                           stroke="currentColor" stroke-width="1.5"><polyline points="2,9 7,14 16,4"/></svg>
-                      Thank you — we'll be in touch within 48 hours.
-                    </div>`
-            }, 1000)
+        btn.addEventListener('click', async () => {
+            try {
+                await copy(link.textContent.trim())
+                toast.textContent = 'Email copied'
+            } catch {
+                toast.textContent = 'Copy blocked, select the address'
+            }
+            toast.classList.add('show')
+            window.clearTimeout(timer)
+            timer = window.setTimeout(() => toast.classList.remove('show'), 1800)
         })
     }
 
@@ -328,10 +435,11 @@
     document.addEventListener('DOMContentLoaded', () => {
         initMarquee()
         initSlideshow()
+        initApproachSlideshow()
         initPortfolio()
         initOverlay()
         initNav()
-        initContactForm()
+        initCopyEmail()
         initReveals() // last — the portfolio cards must exist to be observed
     })
 })()

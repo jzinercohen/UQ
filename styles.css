@@ -4,22 +4,6 @@
    ═══════════════════════════════════════════════════════════════════════════ */
 
 /* ── FONTS ── */
-@font-face {
-    font-family: 'Bebas Neue';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('assets/fonts/bebas-neue-latin.woff2') format('woff2');
-    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-}
-@font-face {
-    font-family: 'Bebas Neue';
-    font-style: normal;
-    font-weight: 400;
-    font-display: swap;
-    src: url('assets/fonts/bebas-neue-latin-ext.woff2') format('woff2');
-    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
 /* DM Sans ships as a variable font — one file covers weights 300–600. */
 @font-face {
     font-family: 'DM Sans';
@@ -83,7 +67,13 @@
     --faint: #3a3830;
     --border: rgba(245, 244, 240, 0.16);
 
-    --font-display: 'Bebas Neue', 'Helvetica Neue', Impact, sans-serif;
+    /* Display and body are the same family, separated by weight, size, and
+       tracking rather than by typeface. Bebas Neue was condensed and heavy —
+       the client read it as brutalist. DM Sans at 300 with open letter-spacing
+       keeps the modern, clean register but sits lighter and more architectural.
+       It is a variable font (300-600), already self-hosted, so the lighter
+       display weight costs no extra request. */
+    --font-display: 'DM Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
     --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
 
     /* Single knob for horizontal rhythm — every section inherits it. */
@@ -213,7 +203,11 @@ nav.scrolled {
     width: 0;
     height: 0;
     pointer-events: none;
-    transition: width 0.22s ease, height 0.22s ease 0.22s;
+    /* At zero size the two 1px borders still paint — they showed as a pair of
+       dots at opposite corners of the mark. Held at opacity 0 until hover so
+       nothing is visible until the stroke actually draws. */
+    opacity: 0;
+    transition: width 0.22s ease, height 0.22s ease 0.22s, opacity 0.12s ease 0.1s;
 }
 .nav-logo::before {
     top: -9px;
@@ -231,6 +225,9 @@ nav.scrolled {
 .nav-logo:hover::after {
     width: calc(100% + 18px);
     height: calc(100% + 18px);
+    opacity: 1;
+    /* No delay on the way in, so the stroke is visible as it draws. */
+    transition: width 0.22s ease, height 0.22s ease 0.22s, opacity 0.1s ease;
 }
 /* The logo ships as black artwork on an opaque white background (no alpha).
    invert() flips it to white-on-black, then `screen` drops the black to
@@ -239,7 +236,11 @@ nav.scrolled {
     height: 34px;
     filter: invert(1);
     mix-blend-mode: screen;
-    transform-origin: left center;
+    /* Must stay `center`. The stroke rectangle is drawn from the anchor box,
+       which `transform` does not resize — so scaling from `left center` grew
+       the mark rightward only and left it sitting off-centre inside the box.
+       Scaling about the centre keeps the two concentric. */
+    transform-origin: center;
     transition: transform 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 .nav-logo:hover img {
@@ -254,7 +255,7 @@ nav.scrolled {
 .nav-links a {
     color: rgba(245, 244, 240, 0.75);
     text-decoration: none;
-    font-size: 10.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     font-weight: 500;
@@ -350,25 +351,27 @@ nav.scrolled {
     position: absolute;
     inset: 0;
 }
+/* The slow push-in is a *transition* on transform, not a keyframe animation
+   scoped to .active. As an animation it only existed while the class was set,
+   so the moment a slide lost .active its transform snapped from wherever the
+   zoom had reached back to none — a visible jump underneath the cross-fade.
+   As a transition the scale simply eases back out while the slide fades, which
+   is imperceptible.
+
+   The fade is deliberately long relative to the 5.5s cycle: at this length the
+   two frames genuinely dissolve rather than cutting. */
 .hero-slide {
     position: absolute;
     inset: 0;
     background-size: cover;
     background-position: center 30%;
     opacity: 0;
-    transition: opacity 1.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(1.06);
+    transition: opacity 2.2s cubic-bezier(0.4, 0, 0.2, 1), transform 9s ease-out;
 }
 .hero-slide.active {
     opacity: 1;
-    animation: heroZoom 9s ease-in-out forwards;
-}
-@keyframes heroZoom {
-    from {
-        transform: scale(1.07);
-    }
-    to {
-        transform: scale(1.01);
-    }
+    transform: scale(1);
 }
 
 .hero-overlay {
@@ -395,12 +398,14 @@ nav.scrolled {
     max-width: var(--maxw);
     width: 100%;
 }
+/* Sizes here are set for DM Sans, which is far wider than the condensed face
+   this replaced — the same pixel value would run a third wider on the page. */
 .hero-title {
     font-family: var(--font-display);
-    font-size: clamp(58px, 10vw, 156px);
-    font-weight: 400;
-    line-height: 0.88;
-    letter-spacing: 0.015em;
+    font-size: clamp(40px, 6.4vw, 96px);
+    font-weight: 300;
+    line-height: 1.02;
+    letter-spacing: 0.005em;
     color: #fff;
     margin-bottom: 32px;
 }
@@ -408,7 +413,7 @@ nav.scrolled {
     color: var(--accent-light);
 }
 .hero-subtitle {
-    font-size: 15px;
+    font-size: clamp(15px, 1.12vw, 18px);
     font-weight: 300;
     color: var(--light-grey);
     max-width: 440px;
@@ -459,37 +464,31 @@ nav.scrolled {
     color: var(--white);
 }
 
-.hero-scroll-cue {
-    position: absolute;
-    bottom: 44px;
-    right: var(--gutter);
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    color: var(--light-grey);
-    font-size: 8.5px;
-    letter-spacing: 0.3em;
+/* Sits above the hero title. Deliberately quiet — it dates the practice
+   without competing with the display type underneath. */
+.hero-established {
+    font-size: 10px;
+    letter-spacing: 0.34em;
     text-transform: uppercase;
+    color: var(--white);
+    font-weight: 500;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
 }
-.scroll-line {
-    width: 1px;
-    height: 56px;
-    background: linear-gradient(to bottom, var(--label), transparent);
-    animation: scrollPulse 2.2s ease-in-out infinite;
-}
-@keyframes scrollPulse {
-    0%,
-    100% {
-        opacity: 0.35;
-    }
-    50% {
-        opacity: 0.9;
-    }
+.hero-established::before {
+    content: '';
+    display: block;
+    width: 34px;
+    height: 1px;
+    background: var(--label);
+    flex: none;
 }
 
-.hero-stats {
+/* Replaces the old KPI column in the same slot on the right rail. Three words
+   rather than three figures, so nothing here needs verifying. */
+.hero-discipline {
     position: absolute;
     top: 50%;
     right: var(--gutter);
@@ -497,27 +496,27 @@ nav.scrolled {
     z-index: 2;
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    align-items: flex-end;
+    gap: 58px;
     transition: opacity 0.3s;
 }
-.stat-item {
-    text-align: right;
-}
-.stat-num {
+/* Each word sits on its own hairline. The rule is the full width of the word
+   plus its padding, so the three stack into a small ruled column. */
+.hero-discipline span {
     font-family: var(--font-display);
-    font-size: 40px;
-    color: var(--white);
+    font-size: 22px;
+    font-weight: 300;
     line-height: 1;
-}
-.stat-num span {
-    color: var(--label);
-}
-.stat-label {
-    font-size: 8.5px;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.3em;
+    /* Tracking adds a trailing gap after the last letter; pull it back so the
+       text sits flush with the right edge of its rule. */
+    margin-right: -0.3em;
     text-transform: uppercase;
-    color: var(--light-grey);
-    margin-top: 4px;
+    color: var(--white);
+    display: block;
+    text-align: right;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--rule);
 }
 
 .hero-dots {
@@ -537,7 +536,22 @@ nav.scrolled {
     border: none;
     padding: 0;
     cursor: pointer;
+    position: relative;
     transition: background 0.3s, transform 0.3s;
+}
+/* A 5px target is too small to hit reliably, which made the dots read as
+   decoration rather than a control. This grows the clickable area to roughly
+   23x15 without changing the dot's size or the spacing between them. Applied
+   to both slideshows so they behave identically.
+
+   The horizontal inset is half the 10px gap on purpose: any wider and
+   neighbouring targets overlap, so a click in the gap would land on whichever
+   dot happens to come later in the DOM rather than the nearer one. */
+.hero-dot::before,
+.about-dot::before {
+    content: '';
+    position: absolute;
+    inset: -9px -5px;
 }
 .hero-dot.active {
     background: var(--white);
@@ -546,7 +560,7 @@ nav.scrolled {
 
 /* ── SHARED ── */
 .section-label {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.35em;
     text-transform: uppercase;
     color: var(--label);
@@ -578,14 +592,24 @@ nav.scrolled {
 }
 .marquee-item {
     font-family: var(--font-display);
-    font-size: 14px;
+    font-size: 12px;
+    font-weight: 400;
     letter-spacing: 0.3em;
     color: var(--black);
     padding: 0 28px;
 }
+/* A drawn hairline, not a glyph. The diamond this replaced was the only
+   ornamental mark on the site; a thin vertical rule matches the hairlines
+   already used for the discipline rail, the about divider, and the nav edge.
+   Sized in em so it tracks the marquee's own font-size across breakpoints. */
 .marquee-dot {
-    color: rgba(13, 13, 13, 0.35);
-    padding: 0 6px;
+    display: inline-block;
+    width: 1px;
+    height: 12px;
+    /* Sits the rule on the cap-height of the words beside it rather than on
+       the baseline. */
+    vertical-align: -0.1em;
+    background: rgba(13, 13, 13, 0.32);
 }
 @keyframes marquee {
     0% {
@@ -600,21 +624,34 @@ nav.scrolled {
 .about-outer {
     background: var(--black);
 }
+/* Both columns are centred on the same axis: `align-items: center` balances
+   them vertically, and the text column is a centred block of its own so the
+   copy sits against the image rather than drifting to the far left of a
+   half-width column. `justify-items` keeps the pair centred in the grid. */
+/* Text holds the left gutter, image holds the right, and the space between
+   them is the gap plus whatever the copy does not use. The two are no longer
+   centred against each other on purpose: the run of white space through the
+   middle is what separates the reading column from the photography. */
 #about {
     padding: 140px var(--gutter);
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 90px;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    gap: 100px;
     align-items: center;
     max-width: var(--maxw);
     margin: 0 auto;
 }
+.about-left {
+    width: 100%;
+    max-width: 440px;
+    justify-self: start;
+}
 .about-heading {
     font-family: var(--font-display);
-    font-size: clamp(46px, 4.5vw, 76px);
-    font-weight: 400;
-    line-height: 0.93;
-    letter-spacing: 0.02em;
+    font-size: clamp(32px, 3.3vw, 54px);
+    font-weight: 300;
+    line-height: 1.14;
+    letter-spacing: 0.03em;
     color: var(--white);
     margin-bottom: 30px;
 }
@@ -623,7 +660,7 @@ nav.scrolled {
     font-style: normal;
 }
 .about-body {
-    font-size: 14.5px;
+    font-size: clamp(14.5px, 1.08vw, 17.5px);
     line-height: 1.85;
     color: var(--body-grey);
     font-weight: 300;
@@ -639,21 +676,61 @@ nav.scrolled {
 }
 .about-right {
     position: relative;
-}
-.about-image-main {
     width: 100%;
-    aspect-ratio: 4/5;
+    justify-self: end;
+}
+/* Slides stack on top of each other, so the wrapper carries the box and the
+   images fill it absolutely. 3:2 because every frame in APPROACH_IMAGES is a
+   ~1.5 landscape: at 1:1 they were cropped hard at the sides, and the strip of
+   bright pavement left along the bottom edge read as a pale line against the
+   black page.
+
+   7/5 rather than a true 3/2: the three elevations are ~1.5 and the Shaw entry
+   detail is 1.33, so this sits between them and no frame loses more than about
+   5% to the crop. */
+.about-slides {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 7/5;
+    overflow: hidden;
+}
+.about-slide {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
     object-fit: cover;
     display: block;
+    opacity: 0;
+    /* Matched to the hero's dissolve so the two slideshows read as one system. */
+    transition: opacity 2s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.about-image-accent {
-    position: absolute;
-    bottom: -28px;
-    left: -28px;
-    width: 46%;
-    aspect-ratio: 1;
-    object-fit: cover;
-    border: 5px solid var(--black);
+.about-slide.active {
+    opacity: 1;
+}
+/* Same dots as the hero, sat under the frame rather than over it — the
+   photography here runs edge to edge and an overlaid control would land on
+   the image itself. */
+.about-dots {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-top: 20px;
+}
+.about-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: rgba(245, 244, 240, 0.28);
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.3s, transform 0.3s;
+}
+.about-dot.active {
+    background: var(--white);
+    transform: scale(1.5);
 }
 .about-geo {
     position: absolute;
@@ -680,10 +757,10 @@ nav.scrolled {
 }
 .portfolio-heading {
     font-family: var(--font-display);
-    font-size: clamp(46px, 4.5vw, 76px);
-    font-weight: 400;
-    line-height: 0.93;
-    letter-spacing: 0.02em;
+    font-size: clamp(32px, 3.3vw, 54px);
+    font-weight: 300;
+    line-height: 1.14;
+    letter-spacing: 0.03em;
 }
 .portfolio-grid {
     display: grid;
@@ -693,15 +770,17 @@ nav.scrolled {
     margin: 0 auto;
 }
 
-/* Editorial rhythm: two wide cards, then a row of three. Aspect ratios (not
-   fixed pixel heights) so the composition survives every viewport width. */
+/* Three rows of two. Every card is span 6 on the 12-column grid, so the
+   earlier nth-child(1)/(2) override is redundant but harmless. Aspect ratios
+   rather than fixed pixel heights, so the composition survives every
+   viewport width. */
 .proj-card {
     position: relative;
     overflow: hidden;
     cursor: pointer;
     background: #111;
-    grid-column: span 4;
-    aspect-ratio: 5/4;
+    grid-column: span 6;
+    aspect-ratio: 7/5;
     border: none;
     padding: 0;
     text-align: left;
@@ -753,7 +832,7 @@ nav.scrolled {
     transform: translateY(0);
 }
 .proj-tag {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--label);
@@ -762,8 +841,9 @@ nav.scrolled {
 }
 .proj-name {
     font-family: var(--font-display);
-    font-size: 24px;
-    letter-spacing: 0.04em;
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
     color: var(--white);
     margin-bottom: 5px;
     line-height: 1.1;
@@ -773,7 +853,7 @@ nav.scrolled {
     font-size: 34px;
 }
 .proj-location {
-    font-size: 11.5px;
+    font-size: clamp(13px, 0.95vw, 15.5px);
     color: var(--light-grey);
     font-weight: 400;
 }
@@ -802,21 +882,24 @@ nav.scrolled {
 .contact-outer {
     background: var(--black);
 }
+/* Single column since the enquiry form was removed. */
 #contact {
     padding: 140px var(--gutter);
     max-width: var(--maxw);
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 100px;
-    align-items: start;
+}
+/* The intro is capped for a readable measure, but the details below run the
+   full width as a row — left in a narrow column they read as the leftovers of
+   the two-column layout the form used to complete. */
+.contact-intro {
+    max-width: 620px;
 }
 .contact-heading {
     font-family: var(--font-display);
-    font-size: clamp(46px, 4.5vw, 76px);
-    font-weight: 400;
-    line-height: 0.93;
-    letter-spacing: 0.02em;
+    font-size: clamp(32px, 3.3vw, 54px);
+    font-weight: 300;
+    line-height: 1.14;
+    letter-spacing: 0.03em;
     margin-bottom: 22px;
 }
 .contact-heading em {
@@ -824,7 +907,7 @@ nav.scrolled {
     font-style: normal;
 }
 .contact-body {
-    font-size: 14.5px;
+    font-size: clamp(14.5px, 1.08vw, 17.5px);
     line-height: 1.85;
     color: var(--body-grey);
     font-weight: 300;
@@ -833,8 +916,11 @@ nav.scrolled {
 }
 .contact-details {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 56px 96px;
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid var(--rule-soft);
 }
 .contact-item {
     display: flex;
@@ -842,14 +928,14 @@ nav.scrolled {
     gap: 5px;
 }
 .contact-item-label {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.28em;
     text-transform: uppercase;
     color: var(--label);
     font-weight: 500;
 }
 .contact-item-value {
-    font-size: 14.5px;
+    font-size: clamp(14.5px, 1.05vw, 17px);
     color: var(--white);
     font-weight: 400;
     line-height: 1.6;
@@ -863,99 +949,47 @@ nav.scrolled {
     color: var(--white);
 }
 
-.contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-}
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
-.form-label {
-    font-size: 8.5px;
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: #6a6660;
-    font-weight: 500;
-}
-.form-input {
-    background: rgba(255, 255, 255, 0.035);
-    border: 1px solid var(--rule-soft);
-    color: var(--white);
-    padding: 13px 15px;
-    font-family: var(--font-body);
-    /* 16px minimum prevents iOS Safari from zooming on focus. */
-    font-size: 16px;
-    font-weight: 300;
-    outline: none;
-    transition: border-color 0.25s;
-    width: 100%;
-    -webkit-appearance: none;
-    border-radius: 0;
-}
-.form-input::placeholder {
-    color: var(--faint);
-}
-.form-input:focus {
-    border-color: var(--white);
-}
-.form-input:user-invalid {
-    border-color: #a8574f;
-}
-select.form-input {
-    cursor: pointer;
-}
-textarea.form-input {
-    resize: vertical;
-    min-height: 110px;
-}
-.form-submit {
-    background: var(--white);
-    color: var(--black);
-    border: none;
-    padding: 16px 44px;
-    font-family: var(--font-body);
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.25s, transform 0.2s;
-    align-self: flex-start;
-}
-.form-submit:hover:not(:disabled) {
-    background: #ffffff;
-    transform: translateY(-2px);
-}
-.form-submit:disabled {
-    opacity: 0.5;
-    cursor: default;
-    transform: none;
-}
-.form-status {
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    color: var(--label);
-    min-height: 1em;
-}
-.form-status.error {
-    color: #c98079;
-}
-.form-sent {
+/* ── COPY EMAIL ── */
+.contact-email {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
+    /* Anchors the toast, which is positioned against this row. */
+    position: relative;
+}
+.copy-btn {
+    background: none;
+    border: 1px solid var(--rule);
+    padding: 5px;
+    line-height: 0;
+    color: var(--label);
+    cursor: pointer;
+    flex: none;
+    transition: color 0.2s, border-color 0.2s;
+}
+.copy-btn:hover,
+.copy-btn:focus-visible {
     color: var(--white);
-    font-size: 13.5px;
-    letter-spacing: 0.06em;
-    padding-top: 8px;
+    border-color: rgba(245, 244, 240, 0.45);
+}
+/* Sits beside the button and fades out on its own; `visibility` rides the
+   same transition so a hidden toast cannot be read out or clicked. */
+.copy-toast {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--label);
+    white-space: nowrap;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(-4px);
+    transition: opacity 0.45s ease, transform 0.45s ease, visibility 0s linear 0.45s;
+}
+.copy-toast.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s;
 }
 
 /* ── FOOTER ── */
@@ -979,7 +1013,7 @@ footer {
     opacity: 0.45;
 }
 .footer-copy {
-    font-size: 10.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     color: var(--faint);
     letter-spacing: 0.04em;
 }
@@ -1050,13 +1084,21 @@ footer {
    disk untouched, so a properly graded set can drop in later and this comes
    straight back out. Keep it subtle — this is a lift, not a filter. */
 .tone-warm {
-    filter: brightness(1.07) saturate(1.16) sepia(0.12) hue-rotate(-6deg);
+    /* The sepia + hue-rotate this used to carry pulled everything toward
+       yellow, which cancelled the blue now baked into the Chiara skies. Left
+       as a plain brightness/saturation lift so the two corrections agree. */
+    filter: brightness(1.05) saturate(1.12);
 }
 /* No box, no fill, no blur — just the mark itself.
    The arrow is near-black and fully opaque from the start: at lower opacity it
    vanished entirely on the darker frames. What keeps a black glyph readable on
-   a dark photograph is the pair of light halos below — a tight one for edge
-   definition and a wide one for separation — not a panel behind it. */
+   a dark photograph is the black edge below, not a panel behind it.
+
+   The four drop-shadows are offsets at zero blur, one per direction, which
+   traces a hard outline around the glyph rather than the soft halo this used
+   to have. They are declared at low alpha rather than omitted so the hover
+   state interpolates — a filter list can only animate into another list with
+   the same number of entries; going from `none` would snap. */
 .carousel-arrow {
     position: absolute;
     top: 50%;
@@ -1067,21 +1109,31 @@ footer {
     background: none;
     border: none;
     padding: 0;
-    color: #141414;
+    color: var(--white);
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    filter: drop-shadow(0 0 3px rgba(245, 244, 240, 0.95)) drop-shadow(0 0 9px rgba(245, 244, 240, 0.65));
-    transition: filter 0.25s, transform 0.25s;
+    filter:
+        drop-shadow(1px 0 0 rgba(8, 8, 8, 0.45))
+        drop-shadow(-1px 0 0 rgba(8, 8, 8, 0.45))
+        drop-shadow(0 1px 0 rgba(8, 8, 8, 0.45))
+        drop-shadow(0 -1px 0 rgba(8, 8, 8, 0.45));
+    transition: filter 0.28s ease, transform 0.25s ease;
 }
 .carousel-arrow svg {
     width: 26px;
     height: 26px;
     stroke-width: 2;
 }
-.carousel-arrow:hover {
-    filter: drop-shadow(0 0 4px rgba(245, 244, 240, 1)) drop-shadow(0 0 14px rgba(245, 244, 240, 0.85));
+/* Hover thickens the outline to a full black stroke. */
+.carousel-arrow:hover,
+.carousel-arrow:focus-visible {
+    filter:
+        drop-shadow(1.5px 0 0 rgba(8, 8, 8, 0.95))
+        drop-shadow(-1.5px 0 0 rgba(8, 8, 8, 0.95))
+        drop-shadow(0 1.5px 0 rgba(8, 8, 8, 0.95))
+        drop-shadow(0 -1.5px 0 rgba(8, 8, 8, 0.95));
 }
 .carousel-prev {
     left: 28px;
@@ -1104,8 +1156,9 @@ footer {
     align-items: center;
     gap: 12px;
     font-family: var(--font-display);
-    font-size: 18px;
-    letter-spacing: 0.1em;
+    font-size: 13px;
+    font-weight: 400;
+    letter-spacing: 0.16em;
     color: var(--white);
     background: rgba(13, 13, 13, 0.4);
     backdrop-filter: blur(10px);
@@ -1175,7 +1228,7 @@ footer {
     color: var(--white);
 }
 .overlay-tag {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.32em;
     text-transform: uppercase;
     color: var(--label);
@@ -1183,10 +1236,10 @@ footer {
 }
 .overlay-title {
     font-family: var(--font-display);
-    font-size: clamp(40px, 4vw, 68px);
-    font-weight: 400;
-    line-height: 0.93;
-    letter-spacing: 0.02em;
+    font-size: clamp(26px, 2.7vw, 44px);
+    font-weight: 300;
+    line-height: 1.14;
+    letter-spacing: 0.03em;
     color: var(--white);
     margin-bottom: 10px;
 }
@@ -1207,7 +1260,7 @@ footer {
     flex: none;
 }
 .overlay-desc {
-    font-size: 14.5px;
+    font-size: clamp(15px, 1.12vw, 18px);
     line-height: 1.85;
     color: #8a8680;
     font-weight: 300;
@@ -1221,7 +1274,7 @@ footer {
     padding-top: 36px;
 }
 .spec-label {
-    font-size: 8.5px;
+    font-size: clamp(10.5px, 0.78vw, 13px);
     letter-spacing: 0.22em;
     text-transform: uppercase;
     color: var(--label);
@@ -1289,11 +1342,10 @@ footer {
         padding: 110px var(--gutter);
     }
     #contact {
-        gap: 60px;
         padding: 110px var(--gutter);
     }
-    /* Stats would collide with the hero title once the column narrows. */
-    .hero-stats {
+    /* The right rail would collide with the hero title once it narrows. */
+    .hero-discipline {
         display: none !important;
     }
 }
@@ -1403,9 +1455,6 @@ footer {
         font-size: 14px;
         margin-bottom: 32px;
     }
-    .hero-scroll-cue {
-        display: none;
-    }
     .hero-dots {
         bottom: 32px;
     }
@@ -1418,18 +1467,11 @@ footer {
     .about-body {
         max-width: none;
     }
-    /* The offset accent image needs room once it is no longer beside text. */
     .about-right {
         margin-bottom: 28px;
     }
     .about-image-main {
         aspect-ratio: 3/4;
-    }
-    .about-image-accent {
-        bottom: -20px;
-        left: -12px;
-        width: 40%;
-        border-width: 4px;
     }
     .about-geo {
         top: -12px;
@@ -1468,8 +1510,6 @@ footer {
     }
 
     #contact {
-        grid-template-columns: 1fr;
-        gap: 56px;
         padding: 84px var(--gutter);
     }
     .contact-body {
@@ -1518,13 +1558,6 @@ footer {
         padding: 15px 24px;
     }
 
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    .form-submit {
-        align-self: stretch;
-        text-align: center;
-    }
 
     .overlay-specs {
         grid-template-columns: 1fr;
@@ -1563,7 +1596,10 @@ footer {
         opacity: 1;
         transform: none;
     }
+    /* The push-in is a transform transition now, not an animation, so it needs
+       neutralising here rather than `animation: none`. */
+    .hero-slide,
     .hero-slide.active {
-        animation: none;
+        transform: none;
     }
 }
