@@ -118,7 +118,9 @@
         <div class="contact-left">
           <div class="section-label reveal">Get in touch</div>
           <h2 class="contact-heading reveal d1">LET'S BUILD<br><em>TOGETHER</em></h2>
-          <p class="contact-body reveal d2">Whether you're exploring a new development or looking to bring an architectural vision to life, we'd love to hear from you.</p>
+          <div class="contact-intro">
+            <p class="contact-body reveal d2">Whether you're exploring a new development or looking to bring an architectural vision to life, we'd love to hear from you.</p>
+          </div>
           <div class="contact-details">
             <div class="contact-item reveal d2">
               <span class="contact-item-label">Address</span>
@@ -146,54 +148,6 @@
           </div>
         </div>
 
-        <div class="reveal-right">
-          <form class="contact-form" id="contactForm" novalidate>
-            <!-- Formspree reads these. `_subject` sets the subject line of the
-                 notification email; without it every enquiry arrives titled
-                 "New submission". The email field is named `email`, which
-                 Formspree recognises, so replies go to the sender. -->
-            <input type="hidden" name="_subject" value="New enquiry from urbanquestinc.com">
-            <!-- Honeypot: hidden from people, tempting to bots. Formspree
-                 discards any submission that fills it. Not `display:none` —
-                 some bots skip those — and tabindex/aria keep it away from
-                 keyboard and screen-reader users. -->
-            <input class="form-gotcha" type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true">
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label" for="firstName">First name</label>
-                <input class="form-input" id="firstName" name="firstName" type="text" autocomplete="given-name" required>
-              </div>
-              <div class="form-group">
-                <label class="form-label" for="lastName">Last name</label>
-                <input class="form-input" id="lastName" name="lastName" type="text" autocomplete="family-name" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="email">Email address</label>
-              <input class="form-input" id="email" name="email" type="email" placeholder="you@company.com" autocomplete="email" required>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="phone">Phone (optional)</label>
-              <input class="form-input" id="phone" name="phone" type="tel" placeholder="+1 (416) 000 0000" autocomplete="tel">
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="enquiryType">Enquiry type</label>
-              <select class="form-input" id="enquiryType" name="enquiryType">
-                <option>New development</option>
-                <option>Architectural design</option>
-                <option>Investment partnership</option>
-                <option>Media or press</option>
-                <option>Other</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label class="form-label" for="message">Message</label>
-              <textarea class="form-input" id="message" name="message" placeholder="Tell us about your project, your site, or what you have in mind." required></textarea>
-            </div>
-            <button class="form-submit" type="submit">Send enquiry</button>
-            <p class="form-status" id="formStatus" role="status" aria-live="polite"></p>
-          </form>
-        </div>
       </section>
     </div>
 

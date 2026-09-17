@@ -899,14 +899,17 @@ nav.scrolled {
 .contact-outer {
     background: var(--black);
 }
+/* Single column since the enquiry form was removed. */
 #contact {
     padding: 140px var(--gutter);
     max-width: var(--maxw);
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 100px;
-    align-items: start;
+}
+/* The intro is capped for a readable measure, but the details below run the
+   full width as a row — left in a narrow column they read as the leftovers of
+   the two-column layout the form used to complete. */
+.contact-intro {
+    max-width: 620px;
 }
 .contact-heading {
     font-family: var(--font-display);
@@ -930,8 +933,11 @@ nav.scrolled {
 }
 .contact-details {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    flex-wrap: wrap;
+    gap: 56px 96px;
+    margin-top: 64px;
+    padding-top: 48px;
+    border-top: 1px solid var(--rule-soft);
 }
 .contact-item {
     display: flex;
@@ -1001,111 +1007,6 @@ nav.scrolled {
     visibility: visible;
     transform: translateX(0);
     transition: opacity 0.18s ease, transform 0.18s ease, visibility 0s;
-}
-
-.contact-form {
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-}
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-}
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 7px;
-}
-.form-label {
-    font-size: clamp(10.5px, 0.78vw, 13px);
-    letter-spacing: 0.22em;
-    text-transform: uppercase;
-    color: #6a6660;
-    font-weight: 500;
-}
-.form-input {
-    background: rgba(255, 255, 255, 0.035);
-    border: 1px solid var(--rule-soft);
-    color: var(--white);
-    padding: 13px 15px;
-    font-family: var(--font-body);
-    /* 16px minimum prevents iOS Safari from zooming on focus. */
-    font-size: 16px;
-    font-weight: 300;
-    outline: none;
-    transition: border-color 0.25s;
-    width: 100%;
-    -webkit-appearance: none;
-    border-radius: 0;
-}
-.form-input::placeholder {
-    color: var(--faint);
-}
-.form-input:focus {
-    border-color: var(--white);
-}
-.form-input:user-invalid {
-    border-color: #a8574f;
-}
-select.form-input {
-    cursor: pointer;
-}
-textarea.form-input {
-    resize: vertical;
-    min-height: 110px;
-}
-.form-submit {
-    background: var(--white);
-    color: var(--black);
-    border: none;
-    padding: 16px 44px;
-    font-family: var(--font-body);
-    font-size: 11px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.25s, transform 0.2s;
-    align-self: flex-start;
-}
-.form-submit:hover:not(:disabled) {
-    background: #ffffff;
-    transform: translateY(-2px);
-}
-.form-submit:disabled {
-    opacity: 0.5;
-    cursor: default;
-    transform: none;
-}
-/* The spam honeypot. Moved off-screen rather than display:none, because
-   some bots deliberately skip hidden inputs and would sail past it. */
-.form-gotcha {
-    position: absolute;
-    left: -9999px;
-    width: 1px;
-    height: 1px;
-    opacity: 0;
-    pointer-events: none;
-}
-.form-status {
-    font-size: 13px;
-    letter-spacing: 0.04em;
-    color: var(--label);
-    min-height: 1em;
-}
-.form-status.error {
-    color: #c98079;
-}
-.form-sent {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--white);
-    font-size: 13.5px;
-    letter-spacing: 0.06em;
-    padding-top: 8px;
 }
 
 /* ── FOOTER ── */
@@ -1458,7 +1359,6 @@ footer {
         padding: 110px var(--gutter);
     }
     #contact {
-        gap: 60px;
         padding: 110px var(--gutter);
     }
     /* The right rail would collide with the hero title once it narrows. */
@@ -1627,8 +1527,6 @@ footer {
     }
 
     #contact {
-        grid-template-columns: 1fr;
-        gap: 56px;
         padding: 84px var(--gutter);
     }
     .contact-body {
@@ -1677,13 +1575,6 @@ footer {
         padding: 15px 24px;
     }
 
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-    .form-submit {
-        align-self: stretch;
-        text-align: center;
-    }
 
     .overlay-specs {
         grid-template-columns: 1fr;
