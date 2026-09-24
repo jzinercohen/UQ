@@ -839,18 +839,18 @@ nav.scrolled {
     font-weight: 500;
     margin-bottom: 7px;
 }
+/* One fluid size for every card, wide or narrow — 34px on a full desktop
+   down to 26px on tablet/mobile. Deliberately not split per card: the grid
+   already signals hierarchy through card size, so the names read as one
+   consistent set instead of two tiers. */
 .proj-name {
     font-family: var(--font-display);
-    font-size: 18px;
+    font-size: clamp(26px, 2.4vw, 34px);
     font-weight: 400;
     letter-spacing: 0.08em;
     color: var(--white);
     margin-bottom: 5px;
     line-height: 1.1;
-}
-.proj-card:nth-child(1) .proj-name,
-.proj-card:nth-child(2) .proj-name {
-    font-size: 34px;
 }
 .proj-location {
     font-size: clamp(13px, 0.95vw, 15.5px);
@@ -1363,10 +1363,6 @@ footer {
         grid-column: span 12;
         aspect-ratio: 2/1;
     }
-    .proj-card:nth-child(1) .proj-name,
-    .proj-card:nth-child(2) .proj-name {
-        font-size: 26px;
-    }
 
     .overlay-inner {
         grid-template-columns: 1fr;
@@ -1454,6 +1450,12 @@ footer {
     .hero-subtitle {
         font-size: 14px;
         margin-bottom: 32px;
+        /* On a phone the hero photo sits right behind this copy with no side
+           column to fall back on, so the muted --light-grey blends into bright
+           sky. Lift it toward white and add a soft scrim-shadow — contrast over
+           any frame without touching the desktop treatment. */
+        color: rgba(245, 244, 240, 0.92);
+        text-shadow: 0 1px 12px rgba(13, 13, 13, 0.55);
     }
     .hero-dots {
         bottom: 32px;
@@ -1495,11 +1497,6 @@ footer {
     .proj-card:last-child:nth-child(odd) {
         grid-column: span 12;
         aspect-ratio: 4/3;
-    }
-    .proj-card .proj-name,
-    .proj-card:nth-child(1) .proj-name,
-    .proj-card:nth-child(2) .proj-name {
-        font-size: 26px;
     }
     .proj-card-info {
         padding: 20px;
